@@ -1,7 +1,5 @@
-
-
 # SYNC LOCAL VERSION OF WEBSITE TO GU-DOMAINS SERVER
-rsync -alvr --delete 501-project-website INSERT_USER_NAME@gtown.reclaimhosting.com:/home/INSERT_USER_NAME/public_html/
+rsync -alvr --delete 501-project-website shiyugeo@gtown3.reclaimhosting.com:/home/shiyugeo/public_html/
 
 # PUSH GIT REPO TO THE CLOUD FOR BACKUP
 DATE=$(date +"DATE-%Y-%m-%d-TIME-%H-%M-%S")
