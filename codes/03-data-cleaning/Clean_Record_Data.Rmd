@@ -1,0 +1,216 @@
+---
+title: "HW2.2"
+author: "Shiyu Wang"
+date: '2022-09-24'
+output: html_document
+---
+
+# Clean the record data using R
+
+```{r}
+train <- read.csv("train.csv")
+test <- read.csv("test.csv")
+```
+
+```{r}
+dim(train)
+```
+
+```{r}
+dim(test)
+```
+Test data has no label column. Next see the column names of train data.
+
+```{r}
+print(colnames(train))
+```
+Delete columns which are useless for modeling.
+```{r}
+drop <- c('ID' ,'Customer_ID' ,'Month' ,'Name', 'Type_of_Loan', 'Credit_History_Age', 'SSN')
+train <- train[,!(names(train) %in% drop)]
+```
+
+```{r}
+summary(train)
+```
+
+```{r}
+num_na <- sum(is.na(train))
+num_complete <- sum(complete.cases(train))
+ratio <- num_na/(num_na+num_complete)
+```
+
+```{r}
+print(ratio)
+```
+That is to say, 16.91% of data are NA.
+
+```{r}
+library(tidyverse)
+library(naniar)
+train %>% 
+  miss_var_summary()
+```
+
+Then dropping all observations with more than 3 missing values.
+
+```{r}
+size_before_cleaning <- dim(train)
+print(size_before_cleaning)
+```
+
+```{r}
+delete.na <- function(df, n=3){
+  df[rowSums(is.na(df)) <= n, ]
+}
+```
+
+```{r}
+train <- delete.na(train)
+```
+
+```{r}
+size_after_cleaning <- dim(train)
+print(size_after_cleaning)
+```
+
+```{r}
+filter_general <- function(value){
+  if(str_detect(toString(value),"-")){
+    return(strsplit(toString(value),"-")[[1]][2])
+  }
+  else if(str_detect(toString(value),"_")){
+    return(strsplit(toString(value),"_")[[1]][1])
+  }
+  else{
+    return(toString(value))
+  }
+}
+```
+
+```{r}
+filter_delayed_payments <- function(value){
+  if(str_detect(toString(value),"__")){
+    return(strsplit(toString(value),"__")[[1]][2])
+  }
+  else if(str_detect(toString(value),"_")){
+    return(gsub("_","",toString(value)))
+  }
+  else if(toString(value) == "_"){
+    return(toString(value))
+  }
+  else{
+    return(toString(value))
+  }
+}
+```
+
+```{r}
+Amount_invested_monthly <- function(col){
+  if(str_detect(toString(col),"__")){
+    return(strsplit(toString(col),"__")[[1]][2])
+  }
+  else{
+    return(toString(col))
+  }
+}
+```
+
+```{r}
+train$Amount_invested_monthly <- lapply(train$Amount_invested_monthly, Amount_invested_monthly)
+```
+
+```{r}
+train$Amount_invested_monthly <- as.double(train$Amount_invested_monthly)
+```
+
+```{r}
+train$Changed_Credit_Limit <- strsplit(toString(train$Change_Credit_Limit), "_")[[1]][2]
+```
+
+```{r}
+train <- filter(train, train$Changed_Credit_Limit !='_')
+```
+
+```{r}
+train$Changed_Credit_Limit <- as.double(train$Changed_Credit_Limit)
+```
+
+```{r}
+train <- filter(train, train$Monthly_Balance != "__-333333333333333333333333333__")
+```
+
+```{r}
+train$Age <- lapply(train$Age, filter_general)
+train$Annual_Income <- lapply(train$Annual_Income, filter_general)
+train$Num_of_Loan <- lapply(train$Num_of_Loan, filter_general)
+train$Outstanding_Debt <- lapply(train$Outstanding_Debt, filter_general)
+train$Monthly_Balance <- lapply(train$Monthly_Balance, filter_general)
+```
+
+```{r}
+train$Num_of_Delayed_Payment <- lapply(train$Num_of_Delayed_Payment, filter_delayed_payments)
+train$Num_of_Delayed_Payment <- as.double(train$Num_of_Delayed_Payment)
+```
+
+```{r}
+train$Occupation <- gsub("_______",NA,train$Occupation)
+```
+
+```{r}
+occupation <- c("Scientist","Teacher","Engineer","Entrepreneur","Developer","Lawyer","Media_Manager","Doctor","Journalist","Manager","Accountant","Musician","Mechanic","Writer","Architect")
+train$Occupation[is.na(train$Occupation)] <- sample(occupation, sum(is.na(train$Occupation)), replace = TRUE) 
+```
+
+```{r}
+train$Credit_Mix <- gsub("_",NA,train$Credit_Mix)
+```
+
+```{r}
+credit <- c("Standard", "Good", "Bad")
+train$Credit_Mix[is.na(train$Credit_Mix)] <- sample(credit, sum(is.na(train$Credit_Mix)), replace = TRUE)
+```
+
+```{r}
+train$Payment_of_Min_Amount <- gsub("NM", NA, train$Payment_of_Min_Amount)
+```
+
+```{r}
+payment <- c("Yes", "No")
+train$Payment_of_Min_Amount[is.na(train$Payment_of_Min_Amount)] <- sample(payment, sum(is.na(train$Payment_of_Min_Amount)), replace = TRUE)
+```
+
+```{r}
+train$Payment_Behaviour <- gsub("!@9#%8", NA, train$Payment_Behaviour)
+```
+
+```{r}
+behaviour <- c("High_spent_Small_value_payments","Low_spent_Large_value_payments","Low_spent_Small_value_payments","High_spent_Medium_value_payments","High_spent_Large_value_payments","Low_spent_Medium_value_payments")
+train$Payment_Behaviour[is.na(train$Payment_Behaviour)] <- sample(behaviour, sum(is.na(train$Payment_Behaviour)), replace = TRUE)
+```
+
+```{r}
+col <- c("Monthly_Inhand_Salary","Num_of_Delayed_Payment","Num_Credit_Inquiries","Amount_invested_monthly")
+
+for(i in col){
+  train$i[is.na(train$i)] <- median(train$i, na.rm = TRUE)
+}
+```
+
+```{r}
+train$Monthly_Balance[is.na(train$Monthly_Balance)] <- median(train$Monthly_Balance, na.rm = TRUE)
+```
+
+
+```{r}
+write.csv(train,"cleaned_data0.csv", row.names = FALSE)
+```
+
+
+
+
+
+
+
+
+
