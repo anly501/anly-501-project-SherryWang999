@@ -1,0 +1,101 @@
+---
+title: "Homework3"
+author: "Shiyu Wang"
+date: '2022-10-07'
+output: html_document
+---
+## Naive Bayes Classification Model
+```{r}
+library(naivebayes)
+library(dplyr)
+library(ggplot2)
+library(psych)
+library(e1071)
+library(caret)
+library(caTools)
+```
+
+# First import the clean data.
+```{r}
+data <- read.csv("clean_record_data.csv")
+```
+
+# Train set and test split.
+```{r}
+split <- sample.split(data, SplitRatio = 0.7)
+train_cl <- subset(data, split == "TRUE")
+test_cl <- subset(data, split == "FALSE")
+```
+
+# Feature Scaling.
+```{r}
+train_scale <- scale(train_cl[, 3:41])
+test_scale <- scale(test_cl[, 2])
+```
+# Convert feature type to factor for model predicting.
+```{r}
+train_cl$Credit_Score <- as.factor(train_cl$Credit_Score)
+test_cl$Credit_Score <- as.factor(test_cl$Credit_Score)
+```
+# Train the Naive Bayes model using package e1071
+```{r}
+set.seed(120)  # Setting Seed
+classifier_cl <- naiveBayes(Credit_Score ~ ., data = train_cl)
+```
+# Predicting on test data
+```{r}
+y_pred <- predict(classifier_cl, newdata = test_cl)
+```
+# Confusion Matrix
+```{r}
+cm <- table(test_cl$Credit_Score, y_pred)
+cm
+```
+
+```{r}
+confusionMatrix(cm)
+```
+# Visualize the confusion matrix
+```{r}
+library(yardstick)
+library(ggplot2)
+```
+```{r}
+truth_predicted <- data.frame(test_cl$Credit_Score, y_pred)
+names(truth_predicted) <- c("obs","pred")
+```
+
+```{r}
+cm <- conf_mat(truth_predicted, obs, pred)
+```
+
+```{r}
+autoplot(cm, type = "heatmap") +
+  scale_fill_gradient(low = "pink", high = "cyan")
+```
+
+
+I used cleaned record data in homework2 to finish this assignment.
+As we can see in the confusion matrix, the predictive accuracy is only 0.5481. That is to say, although this result is acceptable, it is definitely not the best choice for this dataset. In the confusion matrix, we can see that there are many incorrectly classified instances which means the model does not fit the dataset perfectly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

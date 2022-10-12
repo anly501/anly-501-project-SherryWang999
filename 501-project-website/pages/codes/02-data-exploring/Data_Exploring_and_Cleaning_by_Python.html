@@ -14572,7 +14572,30 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     </script>
     <!-- End of mathjax configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h1 id="Credit-Data-Exploring-and-Cleaning-by-Python">Credit Data Exploring and Cleaning by Python<a class="anchor-link" href="#Credit-Data-Exploring-and-Cleaning-by-Python">&#182;</a></h1>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>In this file, I will use python to complete data exploing and cleaning assignment. The credit dataset is obtained from Kaggle.</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14620,7 +14643,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>I wrote a version of data cleaning in python before using R to clean record data, so I kept the code for this part of cleaning before doing data exploration and visualization.</p>
+<p>Import data into python and see the basic information of the dataset. We can see that the training set of the data has 100,000 observations and 28 features.</p>
 
 </div>
 </div>
@@ -14634,46 +14657,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;train.csv&#39;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>c:\Users\wsy\anaconda3\lib\site-packages\IPython\core\interactiveshell.py:2878: DtypeWarning: Columns (26) have mixed types.Specify dtype option on import or set low_memory=False.
-  exec(code_obj, self.user_global_ns, self.user_ns)
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">df</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
      </div>
@@ -14706,211 +14690,18 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Check the initial column names.</p>
 
-     </div>
 </div>
 </div>
 </div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[&nbsp;]:</div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ID</th>
-      <th>Customer_ID</th>
-      <th>Month</th>
-      <th>Name</th>
-      <th>Age</th>
-      <th>SSN</th>
-      <th>Occupation</th>
-      <th>Annual_Income</th>
-      <th>Monthly_Inhand_Salary</th>
-      <th>Num_Bank_Accounts</th>
-      <th>...</th>
-      <th>Credit_Mix</th>
-      <th>Outstanding_Debt</th>
-      <th>Credit_Utilization_Ratio</th>
-      <th>Credit_History_Age</th>
-      <th>Payment_of_Min_Amount</th>
-      <th>Total_EMI_per_month</th>
-      <th>Amount_invested_monthly</th>
-      <th>Payment_Behaviour</th>
-      <th>Monthly_Balance</th>
-      <th>Credit_Score</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0x1602</td>
-      <td>CUS_0xd40</td>
-      <td>January</td>
-      <td>Aaron Maashoh</td>
-      <td>23</td>
-      <td>821-00-0265</td>
-      <td>Scientist</td>
-      <td>19114.12</td>
-      <td>1824.843333</td>
-      <td>3</td>
-      <td>...</td>
-      <td>_</td>
-      <td>809.98</td>
-      <td>26.822620</td>
-      <td>22 Years and 1 Months</td>
-      <td>No</td>
-      <td>49.574949</td>
-      <td>80.41529543900253</td>
-      <td>High_spent_Small_value_payments</td>
-      <td>312.49408867943663</td>
-      <td>Good</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0x1603</td>
-      <td>CUS_0xd40</td>
-      <td>February</td>
-      <td>Aaron Maashoh</td>
-      <td>23</td>
-      <td>821-00-0265</td>
-      <td>Scientist</td>
-      <td>19114.12</td>
-      <td>NaN</td>
-      <td>3</td>
-      <td>...</td>
-      <td>Good</td>
-      <td>809.98</td>
-      <td>31.944960</td>
-      <td>NaN</td>
-      <td>No</td>
-      <td>49.574949</td>
-      <td>118.28022162236736</td>
-      <td>Low_spent_Large_value_payments</td>
-      <td>284.62916249607184</td>
-      <td>Good</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0x1604</td>
-      <td>CUS_0xd40</td>
-      <td>March</td>
-      <td>Aaron Maashoh</td>
-      <td>-500</td>
-      <td>821-00-0265</td>
-      <td>Scientist</td>
-      <td>19114.12</td>
-      <td>NaN</td>
-      <td>3</td>
-      <td>...</td>
-      <td>Good</td>
-      <td>809.98</td>
-      <td>28.609352</td>
-      <td>22 Years and 3 Months</td>
-      <td>No</td>
-      <td>49.574949</td>
-      <td>81.699521264648</td>
-      <td>Low_spent_Medium_value_payments</td>
-      <td>331.2098628537912</td>
-      <td>Good</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0x1605</td>
-      <td>CUS_0xd40</td>
-      <td>April</td>
-      <td>Aaron Maashoh</td>
-      <td>23</td>
-      <td>821-00-0265</td>
-      <td>Scientist</td>
-      <td>19114.12</td>
-      <td>NaN</td>
-      <td>3</td>
-      <td>...</td>
-      <td>Good</td>
-      <td>809.98</td>
-      <td>31.377862</td>
-      <td>22 Years and 4 Months</td>
-      <td>No</td>
-      <td>49.574949</td>
-      <td>199.4580743910713</td>
-      <td>Low_spent_Small_value_payments</td>
-      <td>223.45130972736786</td>
-      <td>Good</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0x1606</td>
-      <td>CUS_0xd40</td>
-      <td>May</td>
-      <td>Aaron Maashoh</td>
-      <td>23</td>
-      <td>821-00-0265</td>
-      <td>Scientist</td>
-      <td>19114.12</td>
-      <td>1824.843333</td>
-      <td>3</td>
-      <td>...</td>
-      <td>Good</td>
-      <td>809.98</td>
-      <td>24.797347</td>
-      <td>22 Years and 5 Months</td>
-      <td>No</td>
-      <td>49.574949</td>
-      <td>41.420153086217326</td>
-      <td>High_spent_Medium_value_payments</td>
-      <td>341.48923103222177</td>
-      <td>Good</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 28 columns</p>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -14962,6 +14753,18 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Drop some columns that will not be analyzed and see some basic inormation of the data frame.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -14971,6 +14774,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;ID&#39;</span> <span class="p">,</span><span class="s1">&#39;Customer_ID&#39;</span> <span class="p">,</span><span class="s1">&#39;Month&#39;</span> <span class="p">,</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Type_of_Loan&#39;</span><span class="p">,</span> <span class="s1">&#39;Credit_History_Age&#39;</span><span class="p">,</span> <span class="s1">&#39;SSN&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -15044,6 +14848,18 @@ memory usage: 16.0+ MB
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Then check how many empty value each column has.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15106,6 +14922,18 @@ dtype: int64</pre>
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Check how many duplicated observations</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15200,6 +15028,18 @@ dtype: int64</pre>
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Clean all the features separately.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15919,6 +15759,18 @@ Monthly_Balance Successfully Cleaned
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Create histograms to roughly see the distributions of some features.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15993,6 +15845,18 @@ jp-needs-light-background
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Create pie charts to see the ratios of every nomial variables.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
