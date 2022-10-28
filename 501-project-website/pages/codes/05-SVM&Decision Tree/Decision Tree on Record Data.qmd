@@ -1,0 +1,200 @@
+## Classify record data by Decision Tree 
+
+A decision tree is a decision support tool that uses a tree-like model of decisions and their possible consequences, including chance event outcomes, resource costs, and utility. It is one way to display an algorithm that only contains conditional control statements.
+
+In this document, I use the decision tree classification algorithm in scikit-learn to classify my cleaned record data. To improve the accuracy of the classifier, I also perform parameter selection to improve the performance of the model by reducing the number of parameters and eliminating some parameters that are not highly relevant. Next, I debug the parameters of the model through a series of methods to find the most suitable hyperparameters for the model, and train the optimal model to arrive at the final classifier.
+
+The dataset used is a cleaned credit score dataset. The reason for using decision trees for this dataset is that I tried this dataset with two methods (decision trees and SVM) before formally completing this document, and the classification results of SVM were very poor and unsatisfactory, so I decided to use decision tree classification for this dataset.
+
+```{python}
+import pandas as pd
+import numpy as np
+
+record = pd.read_csv("clean_record_data.csv")
+record.head()
+
+record = record.drop(columns=['Unnamed: 0'])
+```
+
+**Normalize the data and divide it into a training set and a test set**
+
+```{python}
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X = record.drop(columns=['Credit_Score'])
+y = record['Credit_Score']
+
+scalar = StandardScaler()
+scalar.fit(X)
+X = scalar.transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
+```
+
+**See the shape of data and Count the distribution of the labels**
+
+```{python}
+# Show the shape of the train and test sets, and levels of the depencent variable (Y) 
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+print(record['Credit_Score'].value_counts())
+```
+
+## Baseline Model
+
+**Decision Tree Model on Recorded Data**
+
+Use DecisionTreeClassifier() function to build the model and fit data. Here I set the initial parameter max_depth=6. Then make predictions on both training set and test set.
+
+```{python}
+from sklearn import tree
+model = tree.DecisionTreeClassifier(max_depth=6)
+model = model.fit(X_train, y_train)
+
+yp_train = model.predict(X_train)
+yp_test = model.predict(X_test)
+```
+
+**Confusion matrix of training set.**
+
+In the confusion matrix, we can visualize how well the model is classified, how much data is correctly classified and how much data is incorrectly classified. For a multi-category problem, for example, this dataset has three categories of labels, so the size of the confusion matrix is $3\times 3$. Also compute the accuracy, precision and recall for the resutls.
+
+```{python}
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+cm1 = confusion_matrix(y_train, yp_train, labels=model.classes_)
+disp1 = ConfusionMatrixDisplay(confusion_matrix=cm1, display_labels=model.classes_)
+disp1.plot()
+plt.show()
+
+cm2 = confusion_matrix(y_test, yp_test, labels=model.classes_)
+disp2 = ConfusionMatrixDisplay(confusion_matrix=cm2, display_labels=model.classes_)
+disp2.plot()
+plt.show()
+```
+
+**Visualize the tree.**
+
+First we visualilze the tree in a text version. This is due to the fact that the amount of data is relatively large and drawing the graph takes a long time, while the text version allows us to see the results more quickly.
+
+```{python}
+text_representation = tree.export_text(model)
+print(text_representation)
+```
+
+Then use graphviz package to visualize the tree. In the graph we can see the tree is pretty wide.
+
+```{python}
+import graphviz
+def plot_tree(model,X,Y):
+    dot_data = tree.export_graphviz(model, out_file=None, 
+                                feature_names=X,  
+                                class_names=Y)
+
+    graph = graphviz.Source(dot_data, format="png") 
+    return graph
+
+feature_names = record.columns.delete(2)
+class_names = ["0","1","2"]
+plot_tree(model,feature_names,class_names)
+```
+
+**Accuracy, precision and recall**
+
+```{python}
+from sklearn.metrics import accuracy_score,confusion_matrix
+
+print("Accuracy(train) of model is {}%".format(accuracy_score(y_test,yp_test) * 100))
+print("Accuracy(test) of model is {}%".format(accuracy_score(y_train,yp_train) * 100))
+```
+
+```{python}
+from sklearn.metrics import classification_report
+# train
+print("------TRAIN------")
+print(classification_report(y_train,yp_train))
+# test
+print("------TEST------")
+print(classification_report(y_test,yp_test))
+```
+
+## Feature Selection
+
+In this part, I used SelctFromModel() function to complete feature selection. Linear models penalized with the L1 norm have sparse solutions: many of their estimated coefficients are zero. When the goal is to reduce the dimensionality of the data to use with another classifier, they can be used along with SelectFromModel to select the non-zero coefficients. In particular, sparse estimators useful for this purpose are the Lasso for regression, and of LogisticRegression and LinearSVC for classification:
+
+```{python}
+X.shape
+
+from sklearn.feature_selection import SelectFromModel
+from sklearn.svm import LinearSVC
+#lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(X, y)
+selectmodel = SelectFromModel(model, prefit=True)
+X_new = selectmodel.transform(X)
+X_new.shape
+```
+
+## Model Tuning
+
+**Here I used GridSearchCV() function to complete model tuning**
+
+The parameters to be tuned are max_depth, min_samples_leaf and criterion.
+
+```{python}
+from sklearn.model_selection import GridSearchCV
+# Create the parameter grid based on the results of random search 
+params = {
+    'max_depth': [2, 3, 5, 10, 20],
+    'min_samples_leaf': [5, 10, 20, 50, 100],
+    'criterion': ["gini", "entropy"]
+}
+grid_search = GridSearchCV(estimator=model, 
+                           param_grid=params, 
+                           cv=4, n_jobs=-1, verbose=1, scoring = "accuracy")
+```
+
+```{python}
+grid_search.fit(X_train, y_train)
+```
+
+```{python}
+grid_search.best_estimator_
+```
+
+```{python}
+def evaluate_model(dt_classifier):
+    print("Train Accuracy :", accuracy_score(y_train, dt_classifier.predict(X_train)))
+    print("Train Confusion Matrix:")
+    print(confusion_matrix(y_train, dt_classifier.predict(X_train)))
+    print("-"*50)
+    print("Test Accuracy :", accuracy_score(y_test, dt_classifier.predict(X_test)))
+    print("Test Confusion Matrix:")
+    print(confusion_matrix(y_test, dt_classifier.predict(X_test)))
+
+```
+
+Fit the best model and evaluate the results.
+
+```{python}
+dt_best = grid_search.best_estimator_
+evaluate_model(dt_best)
+```
+
+Plot the best tree.
+
+```{python}
+plot_tree(dt_best,feature_names,class_names)
+```
+
+## Result Summary
+
+In the whole process of modeling, the model perfomance was obviously promoted.
+
+In the model that was non-optimal at the beginning, although the accuracy improvement of the model on the training and test sets was small, the final decision tree drawn was more concise and easy to understand at a glance due to the optimization of a series of parameters, which greatly reduced the complexity.
+
+I think this makes a lot of sense in practice, because in the workplace people tend to like to achieve the same goals with less consumption.
