@@ -1,155 +1,195 @@
-
 <!DOCTYPE html>
-<html>
-    
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
-    <title>501 project</title>
+  <meta charset="utf-8" />
 
-    <!-- point to css stylesheet -->
-    <link rel="stylesheet" href="styles.css">
- 
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>High Fashion</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="stylesheets/main.css">
+  <link rel="stylesheet" href="stylesheets/app.css">
+
+  <script src="javascripts/modernizr.foundation.js"></script>
+  
+  <!-- Google fonts -->
+<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Playfair+Display:400italic' rel='stylesheet' type='text/css' />
+
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
 </head>
-
-
 <body>
 
+  <div class="row page_wrap">
+    <!-- page wrap -->
+    <div class="twelve columns">
+      <!-- page wrap -->
 
+      <div class="row">
+        <div class="nine columns header_nav">
+            <ul id="menu-header" class="nav-bar horizontal">
+              <li><a href="index.html">About me</a></li>
+              <li><a href="./pages/introduction.html">introduction</a></li>
+              <li><a href="https://github.com/anly501/anly-501-project-SherryWang999/tree/main/codes">code</a></li>
 
-<!-- HEADER BAR -->
-<ul>
-    <!-- link back to homepage -->
-    <li><a href="./index.html">About me</a></li>
-    
-    <!-- tab without dropdown  -->
-    <li><a href="./pages/introduction.html">introduction</a></li>
-    
+              <li class="has-flyout">
+                <a href="#">data</a><a href="#" class="flyout-toggle"></a>
 
-    <!-- tab without dropdown  -->
-    <li><a href="https://github.com/anly501/anly-501-project-SherryWang999/tree/main/codes">code</a></li>
-    
-    
-    <!-- tab with dropdown -->
-  
-    <li class="dropdown">
-      <a href="javascript:void(0)" class="dropbtn">data</a>
-  
-    <div class="dropdown-content">
+                <ul class="flyout">
+                
+                  <li class="has-flyout"><a href="https://github.com/anly501/anly-501-project-SherryWang999/tree/main/data/00-raw-data">See in Github</a></li>
+                  
+                  <li class="has-flyout"><a href="./pages/data/00-raw-data/train.csv">Download</a></li>
+                  
+                </ul>
+              </li>
+
+              <li class="has-flyout">
+                <a href="#">data gathering</a><a href="#" class="flyout-toggle"></a>
+
+                <ul class="flyout">
+                
+                  <li class="has-flyout"><a href="./pages/codes/01-data-gathering/Data_Gathering_by_Python.html">Python Gathering</a></li>
+                  
+                  <li class="has-flyout"><a href="./pages/codes/01-data-gathering/Data_Gathering_by_R.html">R Gathering</a></li>
+                  
+                </ul>
+              </li>
+
+              <li class="has-flyout">
+                <a href="#">data cleaning</a><a href="#" class="flyout-toggle"></a>
+
+                <ul class="flyout">
+                
+                  <li class="has-flyout"><a href="./pages/codes/03-data-cleaning/Clean_Record_Data.html">Record Data</a></li>
+                  
+                  <li class="has-flyout"><a href="./pages/codes/03-data-cleaning/Clean_Text_Data.html">Text Data</a></li>
+                  
+                </ul>
+              </li>
+              <li><a href="./pages/codes/02-data-exploring/Data_Exploring_and_Cleaning_by_Python.html">Exploring Data</a></li>
+              <li class="has-flyout">
+                <a href="#">Naive Bayes</a><a href="#" class="flyout-toggle"></a>
+
+                <ul class="flyout">
+                
+                  <li class="has-flyout"><a href="./pages/codes/04-Modeling/Naive_Bayes_By_Python.html">Python</a></li>
+                  
+                  <li class="has-flyout"><a href="./pages/codes/04-Modeling/Naive_Bayes_By_R.html">R</a></li>
+                  
+                </ul>
+              </li>
+              <li class=""><a href="./pages/codes/05-SVM&Decision Tree/Decision Tree on Record Data.html">Decision Tree</a></li>
+              <li class=""><a href="./pages/codes/05-SVM&Decision Tree/SVM on Labeled Data.html">SVM</a></li>
+
+            </ul><script type="text/javascript">
+           //<![CDATA[
+           $('ul#menu-header').nav-bar();
+            //]]>
+            </script>
+          </div>
           
-      <a href="./pages/data/00-raw-data/train.csv">Download data</a>
-      <a href="https://github.com/anly501/anly-501-project-SherryWang999/tree/main/data/00-raw-data">Show in Github</a>
-      </div>   
-    </li>
-
-    <!-- tab with dropdown -->
-    <li class="dropdown">
-        <a href="javascript:void(0)" class="dropbtn">data gathering</a>
-    
-      <div class="dropdown-content">
-            
-        <a href="./pages/codes/01-data-gathering/Data_Gathering_by_Python.html">python gathering</a>
-        <a href="./pages/codes/01-data-gathering/Data_Gathering_by_R.html">R gathering</a>
-        </div>   
-    </li>
-    
-
-    <!-- tab with dropdown -->
-    <li class="dropdown">
-      <a href="javascript:void(0)" class="dropbtn">Data Cleaning</a>
-  
-    <div class="dropdown-content">
           
-      <a href="./pages/codes/03-data-cleaning/Clean_Record_Data.html">Record Data</a>
-      <a href="./pages/codes/03-data-cleaning/Clean_Text_Data.html">Text Data</a>
-      </div>   
-  </li>
+          
+        </div><!-- END Header -->
 
 
-  <li><a href="./pages/codes/02-data-exploring/Data_Exploring_and_Cleaning_by_Python.html">Exploring Data</a></li>
 
-  <li class="dropdown">
-    <a href="javascript:void(0)" class="dropbtn">Naive Bayes</a>
-
-  <div class="dropdown-content">
-        
-    <a href="./pages/codes/04-Modeling/Naive_Bayes_By_R.html">Naive Bayes by R</a>
-    <a href="./pages/codes/04-Modeling/Naive_Bayes_By_Python.html">Naive Bayes by Python</a>
-    </div>   
-</li>
-
-
-  </div>   
-</li>
-<li><a href="./pages/codes/05-SVM&Decision Tree/Decision Tree on Record Data.html">Decision Tree</a></li>
-
-<li><a href="./pages/codes/05-SVM&Decision Tree/SVM on Labeled Data.html">SVM</a></li>
-    </ul>
-
-
-<!-- USE A TABLE TO ORGANIZE/FORMAT THE WEBPAGE -->
-<table>
-    <!--TABLE ROW-1-->
-   <tr>
-      <!--ROW-1 COL-1-->
-      <td>
-            <img src="images/personal_image.jpg" width="310" height="300">
-      </td>
+      <div class="show-for-large-up">
+        <div class="row">
+          <div class="twelve columns">
+            <div id="featured"><img src="images/personal_image.jpg" alt="desc" /> <img src=
+            "images/image2.jpg" alt="desc" /> <img src="images/image3.jpg" alt="desc" /></div>
+          </div>
+        </div>
+      </div>
       
-      <!--ROW-1 COL-2-->
-      <td>
-            
-        <h2 style="text-align:left; color:rgb(0, 200, 255);">About me</h2>
-        
-        <p  style="font-size:12px;"> Hi I am Shiyu and I am a new student in the DSAN program. I am in a business and management background. As the same time, I have learned Python& R programming to complete some statistical/machine learning project. I am really interested in data visualization of machine learning. I want to learn some career-related skills from this program and step onto a higher platform. After graduation, I really want to be a data analyst in a high-tech company such as Google, etc. I find it very rewarding to fulfill the data analysis needs of customers in a large company, and I am passionate about it. I really like music and I like to wear headphones all the time. I also enjoy hanging out with friends.
-
-          All of my virtues have been incorporated in me by my school and helping is one of them. My school always aims at the holistic development of a student and it focuses on the fact that we develop both morally as well as academically. It is always a part of learning that you try to inculcate virtues in yourself by being an honest person. To be responsible and to adhere to your duties, is what our school teachers us.
-          
-          I am a very consistent and punctual person. Being a dedicated student, I always stand first in my class because of which I have bagged many awards. I always try to improve my skills and morals to become a better student. I do this by helping my classmates with love and dedication.
-          
-          I love to study storybooks as a pastime. I am also learning cycling so that I can keep myself healthy. I believe, one should practice a lot of sports to keep oneself healthy. A healthy mind works better. So, it is very important to keep yourself healthy to get focused. I am also very fond of watching various movies and I love to dance. I have learned many forms of dance ranging from hip-hop to breakdance.
-          
-          Being a lover of various dances, I also love to participate in various curricular activities in my school. I am an active participant in a bunch of fests organized by my school. Also, I have been a part of several quizzes debates, and tabloids. I have a huge interest in quizzes and have bagged many awards and honors to my school. Moreover, I always try to keep myself very punctual to school and help poor people whenever I get a chance.
-          
-          I love to research the undiscovered things in this world which is why I aspire to become a data scientist. I am always thankful to my family and my friends for making me so humble and helping me every day trying to show me the goal amongst the bunch of cloudy weather.
-          
-          Life is a jar of both happiness as well as sadness. Getting always what we want, is not the nature of life. Thus, one needs to keep oneself always motivated to the highest level. Follow the footprints of the great men to never be discouraged and keep yourself focused on your goal.
-          </p>
-
-      </td>
-         
-         
-   </tr>
-
-    <!--ROW-2-->
-   <tr>
-      <!--ROW-2 COL-1-->
-      <td>
-        
-
-        <h2 style="text-align:left; color:blue;">Academic Interests</h2>
-            
-        <p> - Machine Learning </p> 
-        <p> - Data visualization </p> 
-        <p> - Optimization </p> 
-         
-     
- 
-      </td>
       
-      <!--ROW-2 COL-2-->
-      <td>
+      
+      <div class="row">
+      
+        <div class="twelve columns">
+           <div class="heading_dots"><h1 class="heading_supersize"><span class="heading_center_bg">Welcome to My Page!</span></h1></div>
+         </div>
+         
+      </div><!-- end row -->
+      
+      
 
-         <h2 style="text-align:left; color:blue;">Education</h2>
+      <div class="row">
+        <div >
+          <h3>About Me</h3>
 
-  <p>2018: Xi'an Jiaotong University </p> 
-  <p>2022: Georgetown University </p> 
+          <p> Hi I am Shiyu and I am a new student in the DSAN program. I am in a business and management background. As the same time, I have learned Python& R programming to complete some statistical/machine learning project. I am really interested in data visualization of machine learning. I want to learn some career-related skills from this program and step onto a higher platform. After graduation, I really want to be a data analyst in a high-tech company such as Google, etc. I find it very rewarding to fulfill the data analysis needs of customers in a large company, and I am passionate about it. I really like music and I like to wear headphones all the time. I also enjoy hanging out with friends. All of my virtues have been incorporated in me by my school and helping is one of them. My school always aims at the holistic development of a student and it focuses on the fact that we develop both morally as well as academically. It is always a part of learning that you try to inculcate virtues in yourself by being an honest person. To be responsible and to adhere to your duties, is what our school teachers us. I am a very consistent and punctual person. Being a dedicated student, I always stand first in my class because of which I have bagged many awards. I always try to improve my skills and morals to become a better student. I do this by helping my classmates with love and dedication. I love to study storybooks as a pastime. I am also learning cycling so that I can keep myself healthy. I believe, one should practice a lot of sports to keep oneself healthy. A healthy mind works better. So, it is very important to keep yourself healthy to get focused. I am also very fond of watching various movies and I love to dance. I have learned many forms of dance ranging from hip-hop to breakdance. Being a lover of various dances, I also love to participate in various curricular activities in my school. I am an active participant in a bunch of fests organized by my school. Also, I have been a part of several quizzes debates, and tabloids. I have a huge interest in quizzes and have bagged many awards and honors to my school. Moreover, I always try to keep myself very punctual to school and help poor people whenever I get a chance. I love to research the undiscovered things in this world which is why I aspire to become a data scientist. I am always thankful to my family and my friends for making me so humble and helping me every day trying to show me the goal amongst the bunch of cloudy weather. Life is a jar of both happiness as well as sadness. Getting always what we want, is not the nature of life. Thus, one needs to keep oneself always motivated to the highest level. Follow the footprints of the great men to never be discouraged and keep yourself focused on your goal.</p>
+        </div>
+
+        
+        
+      </div><!-- end row -->
+      
+
+      
+      <div class="row" style="padding-top: 20px">
+      
+        <div class="four columns">
+          
+           <h3>Academic Interests</h3>
+           <p> - Machine Learning </p> 
+           <p> - Data visualization </p> 
+           <p> - Optimization </p>
+        </div>
+        
+        <div class="four columns">
+          
+           <h3>Education</h3>
+           <p>2018: Xi'an Jiaotong University </p> 
+           <p>2022: Georgetown University </p> 
+        </div>
+        
+        
+        
+      </div><!-- end row -->
+      
+      
+
+      <div class="row">
+        <div class="twelve columns">
+          <ul id="menu3" class="footer_menu horizontal">
+            <li class=""><a href="index.html">Home</a></li>
+          </ul>
+      </div>
+      </div>
+		  
+		  <script type="text/javascript">
+          //<![CDATA[
+          $('ul#menu3').nav-bar();
+          //]]>
+          </script>
+
+      </div>
+
+    </div><!-- end page wrap) -->
+    <!-- Included JS Files (Compressed) -->
+    <script src="javascripts/foundation.min.js" type="text/javascript">
+</script> <!-- Initialize JS Plugins -->
+     <script src="javascripts/app.js" type="text/javascript">
+</script>
   
-
-
-      </td>
-   </tr>
-   
-</table>
-
-
 </body>
 </html>
