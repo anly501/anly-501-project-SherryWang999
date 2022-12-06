@@ -78,3 +78,7 @@ In the last part I did hierarchical clustering. And dendrograms are used to visu
 ## ARM
 
 From the data frame above containing the result, we find that among all combinations of payment behaviour and occupation, we can observe that the probability of certain combinations occurring is very high, that is, for people in a particular occupation, they may tend to have a certain payment habit, for example, 25% of people who are writers have a payment habit of low spent small value at the same time. by these relationships By comparing these relationships, we can make better decisions for credit evaluation in employment.
+
+## Final Conclusion
+
+Throughout the portfolio project, I went through a lot of processes starting from collecting data, to exploring data, cleaning data, and modeling. The topic of my project is Credit Classification, which aims to facilitate predicting the creditworthiness level of a new employee for a company when hiring a new employee. I used some classification algorithms, such as SVM and decision trees, to build a predictive model to predict the creditworthiness of new employees. In addition, three clustering models (unsupervised learning) are built to cluster the employee's creditworthiness by the relationship between variables, which can be compared with the original categories of the dataset. I have basically completed the initial idea throughout the course of the project.
