@@ -1,11 +1,57 @@
 ---
-title: "HW2.2"
+title: "Data Cleaning by R"
 author: "Shiyu Wang"
 date: '2022-09-24'
 output: html_document
 ---
 
-# Clean the record data using R
+# Record Data Cleaning by R
+
+## Introduction
+
+My original record data set is very dirty. It contains many variables which include duplication, null value and special characters. Also some of the variables are categorical, others are numerical. So we have different strategies to deal with these different type of variables. I wrote a lot of functions in this part to handle all kinds of dirty data in the data set. Also in this part, I transformed the categorical data into one-hot encoding. Also, I standardized all the numerical data for further model input.
+
+## Theory
+
+Data cleaning is the process of removing incorrect, duplicate, or otherwise erroneous data from a dataset. These errors can include incorrectly formatted data, redundant entries, mislabeled data, and other issues; they often arise when two or more datasets are combined together. Data cleaning improves the quality of your data as well as any business decisions that you draw based on the data.
+
+There is no one right way to clean a dataset, as every set is different and presents its own unique slate of errors that need to be corrected. Many data cleaning techniques can now be automated with the help of dedicated software, but some portion of the work must be done manually to ensure the greatest accuracy. Usually this work is done by data quality analysts, BI analysts, and business users.
+
+One-Hot Encoding
+
+Categorical data are variables that contain label values rather than numeric values.
+
+The number of possible values is often limited to a fixed set.
+
+Categorical variables are often called nominal.
+
+Some examples include:
+
+A “pet” variable with the values: “dog” and “cat“.
+
+A “color” variable with the values: “red“, “green” and “blue“.
+
+A “place” variable with the values: “first”, “second” and “third“.
+
+Each value represents a different category.
+
+Some categories may have a natural relationship to each other, such as a natural ordering.
+
+The “place” variable above does have a natural ordering of values. This type of categorical variable is called an ordinal variable.
+
+For categorical variables where no such ordinal relationship exists, the integer encoding is not enough.
+
+In fact, using this encoding and allowing the model to assume a natural ordering between categories may result in poor performance or unexpected results (predictions halfway between categories).
+
+In this case, a one-hot encoding can be applied to the integer representation. This is where the integer encoded variable is removed and a new binary variable is added for each unique integer value.
+
+In the “color” variable example, there are 3 categories and therefore 3 binary variables are needed. A “1” value is placed in the binary variable for the color and “0” values for the other colors.
+
+Standardization
+
+Standardization is the process of developing, promoting and possibly mandating standards-based and compatible technologies and processes within a given industry. Standards for technologies can mandate the quality and consistency of technologies and ensure their compatibility, interoperability and safety.
+
+## Methods
 
 ```{r}
 train <- read.csv("train.csv")
@@ -206,10 +252,17 @@ train$Monthly_Balance[is.na(train$Monthly_Balance)] <- median(train$Monthly_Bala
 write.csv(train,"cleaned_data0.csv", row.names = FALSE)
 ```
 
+## Results
 
+After data cleaning, we remove observations which contain more than 3 null values in a raw, write certain function to clean the variable `delayed_payments` and `Amount_Invested_Monthly` because they really had irregular special characters. For numerical data, I removed outliers by analyzing the boxplot and IQR value and standardized all the numerical variables. Also for categorical variables, I did one-hot encoding for them to make the data more tidy. 
 
+## Conclusions
 
+Generally speaking, there is no any fixed way for data cleaning. What we can do is look as closely as possible at the characteristics of the data and how unclean data emerges. For data that is easy to clean, use some methods in string or dataframe to clean the data; for messy variables, you can design a special function to clean the corresponding variables. In addition, according to your own data analysis needs to determine
 
+## References
+
+https://technologyadvice.com/blog/information-technology/data-cleaning/
 
 
 

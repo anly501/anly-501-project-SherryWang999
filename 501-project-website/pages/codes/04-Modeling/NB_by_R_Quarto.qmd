@@ -1,0 +1,128 @@
+---
+title: "Naive Bayes by R"
+---
+
+## Introduction
+
+In this section, I accomplished the following things. First, use the text data related to personal credit obtained from Twitter above and perform sentiment analysis on the text data using packages . I used the categories obtained from the sentiment analysis as the labels of the data set to make the data set with three categories. And statistical analysis was performed on each category. Second, feature X and label y of the input model are selected and input to the tfidf model to get the importance vector of the text. Third, the Naive Bayesian Classifier is built using the MultinomialNB() function. and predictions are made on the test set, and finally the matrices and values of various model evaluations, such as classification accuracy, confusion matrix, etc., are output.
+
+## Theory
+
+Naive Bayes is a classification algorithm based on Bayes' theorem on the assumption of independent distribution.
+
+\
+\* Advantages
+
+\
+The naive Bayes algorithm assumes that the data set attributes are independent of each other, so the logic of the algorithm is very simple and the algorithm is more stable, and the classification performance of naive Bayesian does not vary much when the data presents different characteristics. In other words, the robustness of the naive Bayesian algorithm is better, and it does not present much variability for different types of data sets. The naive Bayesian classification algorithm will have better results when the relationships between the attributes of the dataset are relatively independent.
+
+\
+\* Disadvantages
+
+\
+The condition of attribute independence is at the same time a shortcoming of the naive Bayesian classifier. The independence of dataset attributes is difficult to be satisfied in many cases because the attributes of the dataset are often interrelated with each other, and if this problem occurs during the classification process, it will lead to a significant reduction in the effectiveness of the classification.
+
+\
+\* Application of NB
+
+\
+Classification is a fundamental problem in the field of data analysis and machine learning. Text classification has been widely used in many aspects such as web information filtering, information retrieval and information recommendation. Data-driven classifier learning has been a hot topic in recent years with many approaches, such as neural networks, decision trees, support vector machines, and Naive Bayes. Compared with other elaborate and more complex classification algorithms, the naive Bayesian classification algorithm is one of the classifiers with better learning efficiency and classification results. Intuitive text classification algorithm and the simplest Bayesian classifier with good interpretability, the Naive Bayesian algorithm is characterized by the assumption that all features appear independent of each other and each feature is equally important. But in fact this assumption does not hold in the real world: firstly, the necessary connection between two adjacent words cannot be independent; secondly, for an article, some representative words in it determine its topic, and it is not necessary to read through the whole article and check all words. So a suitable method for feature selection is needed so that the plain Bayesian classifier can achieve higher classification efficiency.
+
+\
+!\[\](NB.png)
+
+## Methods
+
+import packages
+
+```{r}
+library(naivebayes)
+library(dplyr)
+library(ggplot2)
+library(psych)
+library(e1071)
+library(caret)
+library(caTools)
+```
+
+First, import the clean text data.
+
+```{r}
+data <- read.csv("clean_record_data.csv")
+```
+
+Split the data set into training set and test set.
+
+```{r}
+split <- sample.split(data, SplitRatio = 0.7)
+train_cl <- subset(data, split == "TRUE")
+test_cl <- subset(data, split == "FALSE")
+```
+
+Feature scaling
+
+```{r}
+train_scale <- scale(train_cl[, 3:41])
+test_scale <- scale(test_cl[, 2])
+```
+
+Convert the variable type into factor.
+
+```{r}
+train_cl$Credit_Score <- as.factor(train_cl$Credit_Score)
+test_cl$Credit_Score <- as.factor(test_cl$Credit_Score)
+```
+
+Train the NB model using package \`e1071\`
+
+```{r}
+set.seed(120)  # Setting Seed
+classifier_cl <- naiveBayes(Credit_Score ~ ., data = train_cl)
+```
+
+Predicting on test data.
+
+```{r}
+y_pred <- predict(classifier_cl, newdata = test_cl)
+```
+
+Print the confusion matrix.
+
+```{r}
+cm <- table(test_cl$Credit_Score, y_pred)
+confusionMatrix(cm)
+```
+
+Visualize the confusion matrix.
+
+```{r}
+library(yardstick)
+library(ggplot2)
+truth_predicted <- data.frame(test_cl$Credit_Score, y_pred)
+names(truth_predicted) <- c("obs","pred")
+cm <- conf_mat(truth_predicted, obs, pred)
+
+autoplot(cm, type = "heatmap") +
+  scale_fill_gradient(low = "pink", high = "cyan")
+```
+
+## Result
+
+Generally speaking, the model prediction accuracy is 0.66. It performs well but definitely not the best. I think it is partly because the data set is too small and the content is not completely clean. The twitter data fetched from twitter api contains information from various language and it may not make sense to analyze the complex contents all together. But the result is acceptable. From the confusion matrix, we can see that all the data from label=2 are mis-classified. It is a terrible result but we could just say that twitter text data contain multiple languages, and they are very oral and simplified so basic data processing may not lead to a good result.
+
+## Conclusions
+
+Naive Bayes algorithms are mostly used in sentiment analysis, spam filtering, recommendation systems etc. They are fast and easy to implement but their biggest disadvantage is that the requirement of predictors to be independent. In most of the real life cases, the predictors are dependent, this hinders the performance of the classifier.
+
+\
+\* In spite of my apparently over-simplified assumptions, naive Bayes classifiers have worked quite well in many real-world situations, famously document classification and spam filtering. They require a small amount of training data to estimate the necessary parameters.
+
+\
+\* Naive Bayes learners and classifiers can be extremely fast compared to more sophisticated methods. The decoupling of the class conditional feature distributions means that each distribution can be independently estimated as a one dimensional distribution. This in turn helps to alleviate problems stemming from the curse of dimensionality.
+
+## References
+
+https://towardsdatascience.com/naive-bayes-classifier-81d512f50a7c
+
+\
+https://www.geeksforgeeks.org/naive-bayes-classifiers/

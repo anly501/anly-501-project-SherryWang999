@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.242">
+<meta name="generator" content="quarto-1.2.269">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -111,11 +111,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<section id="using-svm-to-classify-text-data-with-labels." class="level2">
-<h2 class="anchored" data-anchor-id="using-svm-to-classify-text-data-with-labels.">Using SVM to classify text data with labels.</h2>
+<section id="using-svm-to-classify-text-data-with-labels." class="level1">
+<h1>Using SVM to classify text data with labels.</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Support vector machines (SVMs) are a set of supervised learning methods used for classification, regression and outliers detection.</p>
 <p>In this document, I use SVM to classify the cleaned text data with labels. The dataset is from Twitter with the keyword personal credit, associated with my record data, whose labels are the result of sentiment analysis, which are neutral, negative and positive.</p>
 <p>To improve the accuracy of the classifier, I also perform parameter selection to improve the performance of the model by reducing the number of parameters and eliminating some parameters that are not highly relevant. Next, I debug the parameters of the model through a series of methods to find the most suitable hyperparameters for the model, and train the optimal model to arrive at the final classifier.</p>
+</section>
+<section id="theory" class="level2">
+<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<p>The objective of the support vector machine algorithm is to find a hyperplane in an N-dimensional space(N — the number of features) that distinctly classifies the data points.</p>
+<p>To separate the two classes of data points, there are many possible hyperplanes that could be chosen. Our objective is to find a plane that has the maximum margin, i.e the maximum distance between data points of both classes. Maximizing the margin distance provides some reinforcement so that future data points can be classified with more confidence.</p>
+<p>Hyperplanes are decision boundaries that help classify the data points. Data points falling on either side of the hyperplane can be attributed to different classes. Also, the dimension of the hyperplane depends upon the number of features. If the number of input features is 2, then the hyperplane is just a line. If the number of input features is 3, then the hyperplane becomes a two-dimensional plane. It becomes difficult to imagine when the number of features exceeds 3.</p>
+<p><img src="svm.png" class="img-fluid"></p>
+<p>Support vectors are data points that are closer to the hyperplane and influence the position and orientation of the hyperplane. Using these support vectors, we maximize the margin of the classifier. Deleting the support vectors will change the position of the hyperplane.</p>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -210,9 +223,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 Name: sentiment, dtype: int64</code></pre>
 </div>
 </div>
-</section>
-<section id="baseline-model-of-svm" class="level2">
-<h2 class="anchored" data-anchor-id="baseline-model-of-svm">Baseline Model of SVM</h2>
+<section id="baseline-model-of-svm" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-model-of-svm">Baseline Model of SVM</h3>
 <p>Before text classification by SVM, first you have to split the words, create the bow model, and then vectorize the words with countvectorizer() function in scikit-learn.</p>
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>text[<span class="st">'token'</span>] <span class="op">=</span> text[<span class="st">'text'</span>].<span class="bu">str</span>.split(<span class="st">' '</span>)</span>
@@ -347,8 +359,8 @@ Name: sentiment, dtype: int64</code></pre>
 <div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score,confusion_matrix</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(train) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_test,yp_test) <span class="op">*</span> <span class="dv">100</span>))</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(test) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_train,yp_train) <span class="op">*</span> <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(test) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_test,yp_test) <span class="op">*</span> <span class="dv">100</span>))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(train) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_train,yp_train) <span class="op">*</span> <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Accuracy(train) of model is 85.71428571428571%
 Accuracy(test) of model is 95.18716577540107%</code></pre>
@@ -360,7 +372,8 @@ Accuracy(test) of model is 95.18716577540107%</code></pre>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_train, yp_train, labels<span class="op">=</span>model.classes_)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>model.classes_)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Confusion Matrix on Train Set"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="homework4_svm_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
 </div>
@@ -370,7 +383,8 @@ Accuracy(test) of model is 95.18716577540107%</code></pre>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, yp_test, labels<span class="op">=</span>model.classes_)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>model.classes_)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Confusion Matrix on Test Set"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="homework4_svm_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
 </div>
@@ -418,8 +432,8 @@ c:\Users\wsy\anaconda3\lib\site-packages\sklearn\metrics\_classification.py:1318
 </div>
 </div>
 </section>
-<section id="feature-selection" class="level2">
-<h2 class="anchored" data-anchor-id="feature-selection">Feature Selection</h2>
+<section id="feature-selection" class="level3">
+<h3 class="anchored" data-anchor-id="feature-selection">Feature Selection</h3>
 <p>In this part, I used the univariate feature selection. Univariate feature selection works by selecting the best features based on univariate statistical tests. It can be seen as a preprocessing step to an estimator.</p>
 <p>SelectKBest removes all but the highest scoring features</p>
 <p>We can see the effect of this model where the shape of X changes from (250,828) to (250,10). k=10 is the value of manual settings.</p>
@@ -441,8 +455,8 @@ c:\Users\wsy\anaconda3\lib\site-packages\sklearn\metrics\_classification.py:1318
 </div>
 </div>
 </section>
-<section id="model-tuning" class="level2">
-<h2 class="anchored" data-anchor-id="model-tuning">Model Tuning</h2>
+<section id="model-tuning" class="level3">
+<h3 class="anchored" data-anchor-id="model-tuning">Model Tuning</h3>
 <p>In this part, I used GridSearchCV() method to tune the best hyperparameters for the SVM model. Parameters to be tuned are C, gamma and kernel.</p>
 <div class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -735,9 +749,17 @@ weighted avg       0.85      0.83      0.80        63
 </div>
 </div>
 </section>
-<section id="result-summary" class="level2">
-<h2 class="anchored" data-anchor-id="result-summary">Result Summary</h2>
-<p>In the whole process of modeling, the model perfomance was obviously promoted.</p>
+</section>
+<section id="result" class="level2">
+<h2 class="anchored" data-anchor-id="result">Result</h2>
+<p>Generally speaking, the model performance of SVM on labeled text data is very satisfying. The overall classification accuracy is 0.95 on train set and 0.86 on test set.</p>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+</section>
 </section>
 
 </main>

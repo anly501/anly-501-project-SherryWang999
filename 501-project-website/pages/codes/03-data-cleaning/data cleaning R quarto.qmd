@@ -1,0 +1,235 @@
+---
+title: "Record Data cleaning by R"
+format: html
+editor: visual
+---
+
+## Introduction
+
+My original record data set is very dirty. It contains many variables which include duplication, null value and special characters. Also some of the variables are categorical, others are numerical. So we have different strategies to deal with these different type of variables. I wrote a lot of functions in this part to handle all kinds of dirty data in the data set. Also in this part, I transformed the categorical data into one-hot encoding. Also, I standardized all the numerical data for further model input.
+
+## Theory
+
+Data cleaning is the process of removing incorrect, duplicate, or otherwise erroneous data from a dataset. These errors can include incorrectly formatted data, redundant entries, mislabeled data, and other issues; they often arise when two or more datasets are combined together. Data cleaning improves the quality of your data as well as any business decisions that you draw based on the data.
+
+There is no one right way to clean a dataset, as every set is different and presents its own unique slate of errors that need to be corrected. Many data cleaning techniques can now be automated with the help of dedicated software, but some portion of the work must be done manually to ensure the greatest accuracy. Usually this work is done by data quality analysts, BI analysts, and business users.
+
+**One-Hot Encoding**
+
+Categorical data are variables that contain label values rather than numeric values.
+
+The number of possible values is often limited to a fixed set.
+
+Categorical variables are often called nominal.
+
+Some examples include:
+
+-   A "*pet*" variable with the values: "*dog*" and "*cat*".
+
+-   A "*color*" variable with the values: "*red*", "*green*" and "*blue*".
+
+-   A "*place*" variable with the values: "first", "*second*" *and* "*third*".
+
+Each value represents a different category.
+
+Some categories may have a natural relationship to each other, such as a natural ordering.
+
+The "*place*" variable above does have a natural ordering of values. This type of categorical variable is called an ordinal variable.
+
+For categorical variables where no such ordinal relationship exists, the integer encoding is not enough.
+
+In fact, using this encoding and allowing the model to assume a natural ordering between categories may result in poor performance or unexpected results (predictions halfway between categories).
+
+In this case, a one-hot encoding can be applied to the integer representation. This is where the integer encoded variable is removed and a new binary variable is added for each unique integer value.
+
+In the "*color*" variable example, there are 3 categories and therefore 3 binary variables are needed. A "1" value is placed in the binary variable for the color and "0" values for the other colors.
+
+**Standardization**
+
+Standardization is the process of developing, promoting and possibly mandating standards-based and compatible technologies and processes within a given industry. Standards for technologies can mandate the quality and consistency of technologies and ensure their compatibility, interoperability and safety.
+
+## Methods
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+train <- read.csv("train.csv")
+test <- read.csv("test.csv")
+```
+
+You can add options to executable code like this
+
+```{r}
+dim(train)
+dim(test)
+```
+
+Test data has no label column. Next see the column names of train data.
+
+```{r}
+print(colnames(train))
+```
+
+Delete columns which are useless for modeling.
+
+```{r}
+drop <- c('ID' ,'Customer_ID' ,'Month' ,'Name', 'Type_of_Loan', 'Credit_History_Age', 'SSN')
+train <- train[,!(names(train) %in% drop)]
+```
+
+```{r}
+summary(train)
+```
+
+```{r}
+num_na <- sum(is.na(train))
+num_complete <- sum(complete.cases(train))
+ratio <- num_na/(num_na+num_complete)
+print(ratio)
+```
+
+That is to say, 16.91% of data are NA.
+
+```{r}
+library(tidyverse)
+library(naniar)
+train %>% 
+  miss_var_summary()
+```
+
+Then dropping all observations with more than 3 missing values.
+
+```{r}
+size_before_cleaning <- dim(train)
+print(size_before_cleaning)
+```
+
+```{r}
+delete.na <- function(df, n=3){
+  df[rowSums(is.na(df)) <= n, ]
+}
+```
+
+```{r}
+train <- delete.na(train)
+```
+
+```{r}
+size_after_cleaning <- dim(train)
+print(size_after_cleaning)
+```
+
+```{r}
+filter_general <- function(value){
+  if(str_detect(toString(value),"-")){
+    return(strsplit(toString(value),"-")[[1]][2])
+  }
+  else if(str_detect(toString(value),"_")){
+    return(strsplit(toString(value),"_")[[1]][1])
+  }
+  else{
+    return(toString(value))
+  }
+}
+```
+
+```{r}
+filter_delayed_payments <- function(value){
+  if(str_detect(toString(value),"__")){
+    return(strsplit(toString(value),"__")[[1]][2])
+  }
+  else if(str_detect(toString(value),"_")){
+    return(gsub("_","",toString(value)))
+  }
+  else if(toString(value) == "_"){
+    return(toString(value))
+  }
+  else{
+    return(toString(value))
+  }
+}
+```
+
+```{r}
+Amount_invested_monthly <- function(col){
+  if(str_detect(toString(col),"__")){
+    return(strsplit(toString(col),"__")[[1]][2])
+  }
+  else{
+    return(toString(col))
+  }
+}
+```
+
+```{r}
+train$Amount_invested_monthly <- lapply(train$Amount_invested_monthly, Amount_invested_monthly)
+train$Amount_invested_monthly <- as.double(train$Amount_invested_monthly)
+train$Changed_Credit_Limit <- strsplit(toString(train$Change_Credit_Limit), "_")[[1]][2]
+train <- filter(train, train$Changed_Credit_Limit !='_')
+train$Changed_Credit_Limit <- as.double(train$Changed_Credit_Limit)
+train <- filter(train, train$Monthly_Balance != "__-333333333333333333333333333__")
+```
+
+```{r}
+train$Age <- lapply(train$Age, filter_general)
+train$Annual_Income <- lapply(train$Annual_Income, filter_general)
+train$Num_of_Loan <- lapply(train$Num_of_Loan, filter_general)
+train$Outstanding_Debt <- lapply(train$Outstanding_Debt, filter_general)
+train$Monthly_Balance <- lapply(train$Monthly_Balance, filter_general)
+```
+
+```{r}
+train$Num_of_Delayed_Payment <- lapply(train$Num_of_Delayed_Payment, filter_delayed_payments)
+train$Num_of_Delayed_Payment <- as.double(train$Num_of_Delayed_Payment)
+```
+
+```{r}
+train$Occupation <- gsub("_______",NA,train$Occupation)
+occupation <- c("Scientist","Teacher","Engineer","Entrepreneur","Developer","Lawyer","Media_Manager","Doctor","Journalist","Manager","Accountant","Musician","Mechanic","Writer","Architect")
+train$Occupation[is.na(train$Occupation)] <- sample(occupation, sum(is.na(train$Occupation)), replace = TRUE) 
+```
+
+```{r}
+train$Credit_Mix <- gsub("_",NA,train$Credit_Mix)
+credit <- c("Standard", "Good", "Bad")
+train$Credit_Mix[is.na(train$Credit_Mix)] <- sample(credit, sum(is.na(train$Credit_Mix)), replace = TRUE)
+```
+
+```{r}
+train$Payment_of_Min_Amount <- gsub("NM", NA, train$Payment_of_Min_Amount)
+payment <- c("Yes", "No")
+train$Payment_of_Min_Amount[is.na(train$Payment_of_Min_Amount)] <- sample(payment, sum(is.na(train$Payment_of_Min_Amount)), replace = TRUE)
+```
+
+```{r}
+train$Payment_Behaviour <- gsub("!@9#%8", NA, train$Payment_Behaviour)
+```
+
+```{r}
+behaviour <- c("High_spent_Small_value_payments","Low_spent_Large_value_payments","Low_spent_Small_value_payments","High_spent_Medium_value_payments","High_spent_Large_value_payments","Low_spent_Medium_value_payments")
+train$Payment_Behaviour[is.na(train$Payment_Behaviour)] <- sample(behaviour, sum(is.na(train$Payment_Behaviour)), replace = TRUE)
+```
+
+```{r}
+col <- c("Monthly_Inhand_Salary","Num_of_Delayed_Payment","Num_Credit_Inquiries","Amount_invested_monthly")
+
+for(i in col){
+  train$i[is.na(train$i)] <- median(train$i, na.rm = TRUE)
+}
+```
+
+```{r}
+train$Monthly_Balance[is.na(train$Monthly_Balance)] <- median(train$Monthly_Balance, na.rm = TRUE)
+```
+
+## Result
+
+After data cleaning, we remove observations which contain more than 3 null values in a raw, write certain function to clean the variable \`delayed_payments\` and \`Amount_Invested_Monthly\` because they really had irregular special characters. For numerical data, I removed outliers by analyzing the boxplot and IQR value and standardized all the numerical variables. Also for categorical variables, I did one-hot encoding for them to make the data more tidy.
+
+## Conclusions
+
+Generally speaking, there is no any fixed way for data cleaning. What we can do is look as closely as What we can do is look as closely as possible at the characteristics of the data and how unclean data emerges. For data that is easy to clean, use some methods in string or dataframe to clean the data; for messy variables, you can design a special function to clean the corresponding variables. In addition, determine whether the data needs to be standardized according to the needs of your own data analysis.
+
+## References
+
+https://technologyadvice.com/blog/information-technology/data-cleaning/

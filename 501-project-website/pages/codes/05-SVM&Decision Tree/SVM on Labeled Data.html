@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.242">
+<meta name="generator" content="quarto-1.2.269">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -111,11 +111,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<section id="using-svm-to-classify-text-data-with-labels." class="level2">
-<h2 class="anchored" data-anchor-id="using-svm-to-classify-text-data-with-labels.">Using SVM to classify text data with labels.</h2>
+<section id="using-svm-to-classify-text-data-with-labels." class="level1">
+<h1>Using SVM to classify text data with labels.</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Support vector machines (SVMs) are a set of supervised learning methods used for classification, regression and outliers detection.</p>
 <p>In this document, I use SVM to classify the cleaned text data with labels. The dataset is from Twitter with the keyword personal credit, associated with my record data, whose labels are the result of sentiment analysis, which are neutral, negative and positive.</p>
 <p>To improve the accuracy of the classifier, I also perform parameter selection to improve the performance of the model by reducing the number of parameters and eliminating some parameters that are not highly relevant. Next, I debug the parameters of the model through a series of methods to find the most suitable hyperparameters for the model, and train the optimal model to arrive at the final classifier.</p>
+</section>
+<section id="theory" class="level2">
+<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<p>The objective of the support vector machine algorithm is to find a hyperplane in an N-dimensional space(N — the number of features) that distinctly classifies the data points.</p>
+<p>To separate the two classes of data points, there are many possible hyperplanes that could be chosen. Our objective is to find a plane that has the maximum margin, i.e the maximum distance between data points of both classes. Maximizing the margin distance provides some reinforcement so that future data points can be classified with more confidence.</p>
+<p>Hyperplanes are decision boundaries that help classify the data points. Data points falling on either side of the hyperplane can be attributed to different classes. Also, the dimension of the hyperplane depends upon the number of features. If the number of input features is 2, then the hyperplane is just a line. If the number of input features is 3, then the hyperplane becomes a two-dimensional plane. It becomes difficult to imagine when the number of features exceeds 3.</p>
+<p><img src="svm.png" class="img-fluid"></p>
+<p>Support vectors are data points that are closer to the hyperplane and influence the position and orientation of the hyperplane. Using these support vectors, we maximize the margin of the classifier. Deleting the support vectors will change the position of the hyperplane.</p>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -209,9 +222,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 Name: sentiment, dtype: int64</code></pre>
 </div>
 </div>
-</section>
-<section id="baseline-model-of-svm" class="level2">
-<h2 class="anchored" data-anchor-id="baseline-model-of-svm">Baseline Model of SVM</h2>
+<section id="baseline-model-of-svm" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-model-of-svm">Baseline Model of SVM</h3>
 <p>Before text classification by SVM, first you have to split the words, create the bow model, and then vectorize the words with countvectorizer() function in scikit-learn.</p>
 <div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text[<span class="st">'token'</span>] <span class="op">=</span> text[<span class="st">'text'</span>].<span class="bu">str</span>.split(<span class="st">' '</span>)</span>
@@ -258,7 +270,7 @@ Name: sentiment, dtype: int64</code></pre>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> model.predict(x_train)</span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> model.predict(x_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fitting SVC took 0.01 seconds</code></pre>
+<pre><code>Fitting SVC took 0.0 seconds</code></pre>
 </div>
 </div>
 <p><strong>Calculate the accuracy on both train set and test set.</strong></p>
@@ -266,11 +278,11 @@ Name: sentiment, dtype: int64</code></pre>
 <div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score,confusion_matrix</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(train) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_test,yp_test) <span class="op">*</span> <span class="dv">100</span>))</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(test) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_train,yp_train) <span class="op">*</span> <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(test) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_test,yp_test) <span class="op">*</span> <span class="dv">100</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(train) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_train,yp_train) <span class="op">*</span> <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Accuracy(train) of model is 87.3015873015873%
-Accuracy(test) of model is 95.18716577540107%</code></pre>
+<pre><code>Accuracy(test) of model is 90.47619047619048%
+Accuracy(train) of model is 94.6524064171123%</code></pre>
 </div>
 </div>
 <p><strong>Confusion Matrix</strong></p>
@@ -279,9 +291,10 @@ Accuracy(test) of model is 95.18716577540107%</code></pre>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_train, yp_train, labels<span class="op">=</span>model.classes_)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>model.classes_)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Confusion Matrix on Train Set"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="SVM%20on%20Labeled%20Data_files/figure-html/cell-8-output-1.png" width="504" height="429"></p>
+<p><img src="SVM%20on%20Labeled%20Data_files/figure-html/cell-8-output-1.png" width="504" height="449"></p>
 </div>
 </div>
 <p>confusion matrix of test set</p>
@@ -289,9 +302,10 @@ Accuracy(test) of model is 95.18716577540107%</code></pre>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, yp_test, labels<span class="op">=</span>model.classes_)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>model.classes_)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Confusion Matrix on Test Set"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="SVM%20on%20Labeled%20Data_files/figure-html/cell-9-output-1.png" width="496" height="434"></p>
+<p><img src="SVM%20on%20Labeled%20Data_files/figure-html/cell-9-output-1.png" width="496" height="449"></p>
 </div>
 </div>
 <p><strong>Then calculate the precision and recall for each set.</strong></p>
@@ -307,35 +321,42 @@ Accuracy(test) of model is 95.18716577540107%</code></pre>
 <pre><code>------TRAIN------
               precision    recall  f1-score   support
 
-           0       0.93      1.00      0.96       112
-           1       1.00      0.95      0.98        64
-           2       1.00      0.45      0.62        11
+           0       0.92      1.00      0.96       109
+           1       1.00      0.97      0.98        64
+           2       1.00      0.43      0.60        14
 
     accuracy                           0.95       187
-   macro avg       0.98      0.80      0.85       187
-weighted avg       0.96      0.95      0.95       187
+   macro avg       0.97      0.80      0.85       187
+weighted avg       0.95      0.95      0.94       187
 
 ------TEST------
               precision    recall  f1-score   support
 
-           0       0.87      0.95      0.91        42
-           1       0.88      0.88      0.88        17
-           2       0.00      0.00      0.00         4
+           0       0.88      1.00      0.94        45
+           1       1.00      0.71      0.83        17
+           2       0.00      0.00      0.00         1
 
-    accuracy                           0.87        63
-   macro avg       0.58      0.61      0.60        63
-weighted avg       0.82      0.87      0.84        63
+    accuracy                           0.90        63
+   macro avg       0.63      0.57      0.59        63
+weighted avg       0.90      0.90      0.89        63
 </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, msg_start, len(result))
-C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, msg_start, len(result))
-C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
-  _warn_prf(average, modifier, msg_start, len(result))</code></pre>
+<pre><code>/Users/wangshiyu/opt/anaconda3/lib/python3.9/site-packages/sklearn/metrics/_classification.py:1318: UndefinedMetricWarning:
+
+Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+
+/Users/wangshiyu/opt/anaconda3/lib/python3.9/site-packages/sklearn/metrics/_classification.py:1318: UndefinedMetricWarning:
+
+Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+
+/Users/wangshiyu/opt/anaconda3/lib/python3.9/site-packages/sklearn/metrics/_classification.py:1318: UndefinedMetricWarning:
+
+Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+</code></pre>
 </div>
 </div>
+</section>
 </section>
 <section id="feature-selection" class="level2">
 <h2 class="anchored" data-anchor-id="feature-selection">Feature Selection</h2>
@@ -385,10 +406,8 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END .......................C=0.1, gamma=0.1, kernel=rbf; total time=   0.0s
 [CV] END .......................C=0.1, gamma=0.1, kernel=rbf; total time=   0.0s
 [CV] END .......................C=0.1, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END ......................C=0.1, gamma=0.1, kernel=poly; total time=   0.0s</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[CV] END ......................C=0.1, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END ......................C=0.1, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END ......................C=0.1, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END ......................C=0.1, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END ......................C=0.1, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END ......................C=0.1, gamma=0.1, kernel=poly; total time=   0.0s
@@ -403,13 +422,8 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END ......................C=0.1, gamma=0.01, kernel=rbf; total time=   0.0s
 [CV] END ......................C=0.1, gamma=0.01, kernel=rbf; total time=   0.0s
 [CV] END .....................C=0.1, gamma=0.01, kernel=poly; total time=   0.0s
-[CV] END .....................C=0.1, gamma=0.01, kernel=poly; total time=   0.0s</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[CV] END .....................C=0.1, gamma=0.01, kernel=poly; total time=   0.0s</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
+[CV] END .....................C=0.1, gamma=0.01, kernel=poly; total time=   0.0s
+[CV] END .....................C=0.1, gamma=0.01, kernel=poly; total time=   0.0s
 [CV] END .....................C=0.1, gamma=0.01, kernel=poly; total time=   0.0s
 [CV] END .....................C=0.1, gamma=0.01, kernel=poly; total time=   0.0s
 [CV] END ..................C=0.1, gamma=0.01, kernel=sigmoid; total time=   0.0s
@@ -436,14 +450,14 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END ...........................C=1, gamma=1, kernel=rbf; total time=   0.0s
 [CV] END ...........................C=1, gamma=1, kernel=rbf; total time=   0.0s
 [CV] END ...........................C=1, gamma=1, kernel=rbf; total time=   0.0s
-[CV] END ...........................C=1, gamma=1, kernel=rbf; total time=   0.0s</code></pre>
+[CV] END ...........................C=1, gamma=1, kernel=rbf; total time=   0.0s
+[CV] END ..........................C=1, gamma=1, kernel=poly; total time=   0.0s
+[CV] END ..........................C=1, gamma=1, kernel=poly; total time=   0.0s</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[CV] END ..........................C=1, gamma=1, kernel=poly; total time=   0.0s
 [CV] END ..........................C=1, gamma=1, kernel=poly; total time=   0.0s
 [CV] END ..........................C=1, gamma=1, kernel=poly; total time=   0.0s
-[CV] END ..........................C=1, gamma=1, kernel=poly; total time=   0.0s
-[CV] END ..........................C=1, gamma=1, kernel=poly; total time=   0.0s
 [CV] END .......................C=1, gamma=1, kernel=sigmoid; total time=   0.0s
 [CV] END .......................C=1, gamma=1, kernel=sigmoid; total time=   0.0s
 [CV] END .......................C=1, gamma=1, kernel=sigmoid; total time=   0.0s
@@ -453,14 +467,16 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END .........................C=1, gamma=0.1, kernel=rbf; total time=   0.0s
 [CV] END .........................C=1, gamma=0.1, kernel=rbf; total time=   0.0s
 [CV] END .........................C=1, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END .........................C=1, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END ........................C=1, gamma=0.1, kernel=poly; total time=   0.0s
-[CV] END ........................C=1, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END .........................C=1, gamma=0.1, kernel=rbf; total time=   0.0s</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[CV] END ........................C=1, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END ........................C=1, gamma=0.1, kernel=poly; total time=   0.0s</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[CV] END ........................C=1, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END ........................C=1, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END ........................C=1, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END .....................C=1, gamma=0.1, kernel=sigmoid; total time=   0.0s
 [CV] END .....................C=1, gamma=0.1, kernel=sigmoid; total time=   0.0s
 [CV] END .....................C=1, gamma=0.1, kernel=sigmoid; total time=   0.0s
@@ -485,51 +501,49 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END .......................C=1, gamma=0.001, kernel=rbf; total time=   0.0s
 [CV] END .......................C=1, gamma=0.001, kernel=rbf; total time=   0.0s
 [CV] END .......................C=1, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END .......................C=1, gamma=0.001, kernel=rbf; total time=   0.0s</code></pre>
+[CV] END .......................C=1, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
+[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
+[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
+[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
+[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
+[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
+[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
+[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
+[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
+[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
+[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
+[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
+[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
+[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
+[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
+[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
+[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
+[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
+[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
+[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
+[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
+[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
+[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
+[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
+[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
+[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
+[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
+[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
+[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
+[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
+[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
+[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
+[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
+[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
+[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
-[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
-[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
-[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
-[CV] END ......................C=1, gamma=0.001, kernel=poly; total time=   0.0s
-[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=1, gamma=0.001, kernel=sigmoid; total time=   0.0s
-[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
-[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
-[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
-[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
-[CV] END ..........................C=10, gamma=1, kernel=rbf; total time=   0.0s
-[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
-[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
-[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
-[CV] END .........................C=10, gamma=1, kernel=poly; total time=   0.0s
-[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
-[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
-[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
-[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
-[CV] END ......................C=10, gamma=1, kernel=sigmoid; total time=   0.0s
-[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END ........................C=10, gamma=0.1, kernel=rbf; total time=   0.0s
-[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
-[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
-[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
-[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
-[CV] END .......................C=10, gamma=0.1, kernel=poly; total time=   0.0s
-[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
-[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
-[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
-[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
-[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
+<pre><code>[CV] END ....................C=10, gamma=0.1, kernel=sigmoid; total time=   0.0s
 [CV] END .......................C=10, gamma=0.01, kernel=rbf; total time=   0.0s
 [CV] END .......................C=10, gamma=0.01, kernel=rbf; total time=   0.0s
 [CV] END .......................C=10, gamma=0.01, kernel=rbf; total time=   0.0s
@@ -540,22 +554,22 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END ......................C=10, gamma=0.01, kernel=poly; total time=   0.0s
 [CV] END ......................C=10, gamma=0.01, kernel=poly; total time=   0.0s
 [CV] END ......................C=10, gamma=0.01, kernel=poly; total time=   0.0s
+[CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s
 [CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END .....................C=10, gamma=0.001, kernel=poly; total time=   0.0s</code></pre>
+[CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[CV] END .....................C=10, gamma=0.001, kernel=poly; total time=   0.0s
+<pre><code>[CV] END ...................C=10, gamma=0.01, kernel=sigmoid; total time=   0.0s
+[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END ......................C=10, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END .....................C=10, gamma=0.001, kernel=poly; total time=   0.0s
+[CV] END .....................C=10, gamma=0.001, kernel=poly; total time=   0.0s
 [CV] END .....................C=10, gamma=0.001, kernel=poly; total time=   0.0s
 [CV] END .....................C=10, gamma=0.001, kernel=poly; total time=   0.0s
 [CV] END .....................C=10, gamma=0.001, kernel=poly; total time=   0.0s
@@ -590,10 +604,8 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END ......................C=100, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END ......................C=100, gamma=0.1, kernel=poly; total time=   0.0s
 [CV] END ...................C=100, gamma=0.1, kernel=sigmoid; total time=   0.0s
-[CV] END ...................C=100, gamma=0.1, kernel=sigmoid; total time=   0.0s</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[CV] END ...................C=100, gamma=0.1, kernel=sigmoid; total time=   0.0s
+[CV] END ...................C=100, gamma=0.1, kernel=sigmoid; total time=   0.0s
+[CV] END ...................C=100, gamma=0.1, kernel=sigmoid; total time=   0.0s
 [CV] END ...................C=100, gamma=0.1, kernel=sigmoid; total time=   0.0s
 [CV] END ...................C=100, gamma=0.1, kernel=sigmoid; total time=   0.0s
 [CV] END ......................C=100, gamma=0.01, kernel=rbf; total time=   0.0s
@@ -601,26 +613,26 @@ C:\Python3\lib\site-packages\sklearn\metrics\_classification.py:1245: UndefinedM
 [CV] END ......................C=100, gamma=0.01, kernel=rbf; total time=   0.0s
 [CV] END ......................C=100, gamma=0.01, kernel=rbf; total time=   0.0s
 [CV] END ......................C=100, gamma=0.01, kernel=rbf; total time=   0.0s
-[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s</code></pre>
+[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
+[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
+[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
+[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
+[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
+[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
+[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
+[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
+[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
+[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
+[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
+[CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s
+[CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
-[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
-[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
-[CV] END .....................C=100, gamma=0.01, kernel=poly; total time=   0.0s
-[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END ..................C=100, gamma=0.01, kernel=sigmoid; total time=   0.0s
-[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END .....................C=100, gamma=0.001, kernel=rbf; total time=   0.0s
-[CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s
-[CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s
-[CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s
+<pre><code>[CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s
 [CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s
 [CV] END ....................C=100, gamma=0.001, kernel=poly; total time=   0.0s
 [CV] END .................C=100, gamma=0.001, kernel=sigmoid; total time=   0.0s
@@ -633,38 +645,69 @@ SVC(C=100, gamma=0.01)</code></pre>
 </div>
 <p>See the classification report and confusion matrix of the optimal model.</p>
 <div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report, confusion_matrix</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>grid_predictions <span class="op">=</span> grid.predict(x_test)</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(confusion_matrix(y_test,grid_predictions))</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test,grid_predictions))</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(accuracy_score(y_test,grid_predictions))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report, confusion_matrix</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>grid_predictions <span class="op">=</span> grid.predict(x_test)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(confusion_matrix(y_test,grid_predictions))</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test,grid_predictions))</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(accuracy_score(y_test,grid_predictions))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[[42  0  0]
- [ 3 14  0]
- [ 3  0  1]]</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
+<pre><code>[[44  1  0]
+ [ 4 13  0]
+ [ 1  0  0]]
               precision    recall  f1-score   support
 
-           0       0.88      1.00      0.93        42
-           1       1.00      0.82      0.90        17
-           2       1.00      0.25      0.40         4
+           0       0.90      0.98      0.94        45
+           1       0.93      0.76      0.84        17
+           2       0.00      0.00      0.00         1
 
     accuracy                           0.90        63
-   macro avg       0.96      0.69      0.75        63
-weighted avg       0.92      0.90      0.89        63
+   macro avg       0.61      0.58      0.59        63
+weighted avg       0.89      0.90      0.90        63
 
 0.9047619047619048</code></pre>
 </div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/wangshiyu/opt/anaconda3/lib/python3.9/site-packages/sklearn/metrics/_classification.py:1318: UndefinedMetricWarning:
+
+Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+
+/Users/wangshiyu/opt/anaconda3/lib/python3.9/site-packages/sklearn/metrics/_classification.py:1318: UndefinedMetricWarning:
+
+Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+
+/Users/wangshiyu/opt/anaconda3/lib/python3.9/site-packages/sklearn/metrics/_classification.py:1318: UndefinedMetricWarning:
+
+Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> confusion_matrix(y_test, grid_predictions, labels<span class="op">=</span>grid.classes_)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>disp <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm, display_labels<span class="op">=</span>grid.classes_)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>disp.plot()</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Confusion Matrix on Test Set(Optimal Model)"</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="SVM%20on%20Labeled%20Data_files/figure-html/cell-14-output-1.png" width="496" height="449"></p>
+</div>
 </div>
 </section>
-<section id="result-summary" class="level2">
-<h2 class="anchored" data-anchor-id="result-summary">Result Summary</h2>
-<p>In the whole process of modeling, the model perfomance was obviously promoted.</p>
-<p>Although the prediction accuracy of the tuned model did not improve on the test set, it found the most suitable hyperparameters for this dataset.</p>
-<p>In addition, after feature selection, the vectors generated by the bow model are dimensionally reduced, which is a good way to overcome the drawback of sparse bow model.</p>
+<section id="result" class="level2">
+<h2 class="anchored" data-anchor-id="result">Result</h2>
+<p>Generally speaking, the model performance of SVM on labeled text data is very satisfying. The overall classification accuracy is 0.95 on train set and 0.86 on test set. To see whether I can further improve the model performance, I implemented the feature selection and parameters tuning. For feature selection, I used <code>SelectKBest</code> function to select top K variables from the original text data; for hyper-parameters tuning, I used <code>GridSearchCV</code> function to select the best model and then train the best model as my final result. And I successfully improved the accuracy to 0.87 on test set which means 87% of data were correctly classified.</p>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>Here I summarized some pros and cons for the SVM model.</p>
+<p><strong>Pros and Cons associated with SVM</strong> * Pros: * It works really well with a clear margin of separation * It is effective in high dimensional spaces. * It is effective in cases where the number of dimensions is greater than the number of samples. * It uses a subset of training points in the decision function (called support vectors), so it is also memory efficient. * Cons: * It doesn’t perform well when we have large data set because the required training time is higher * It also doesn’t perform very well, when the data set has more noise i.e.&nbsp;target classes are overlapping * SVM doesn’t directly provide probability estimates, these are calculated using an expensive five-fold cross-validation. It is included in the related SVC method of Python scikit-learn library.</p>
+<p>Also, support vector machine allows you to classify data that’s linearly separable. If it isn’t linearly separable, you can use the kernel trick to make it work. However, for text classification it’s better to just stick to a linear kernel.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>https://monkeylearn.com/blog/introduction-to-support-vector-machines-svm/</p>
+<p>https://www.analyticsvidhya.com/blog/2017/09/understaing-support-vector-machine-example-code/</p>
+</section>
 </section>
 
 </main>

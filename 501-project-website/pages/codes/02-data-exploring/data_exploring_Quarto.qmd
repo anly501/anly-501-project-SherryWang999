@@ -1,0 +1,459 @@
+# Credit Data Exploring and Cleaning by Python
+
+## Introduction
+
+Data cleansing, also known as data cleaning or scrubbing, identifies and fixes errors, duplicates, and irrelevant data from a raw dataset. Part of the data preparation process, data cleansing allows for accurate, defensible data that generates reliable visualizations, models, and business decisions. Data cleaning is the process of detecting and correcting corrupt or inaccurate records from a record set, table, or database and refers to identifying incomplete, incorrect, inaccurate or irrelevant parts of the data and then replacing, modifying, or deleting the dirty or coarse data.
+
+## Theory
+
+* Problem Statement
+
+You are working as a data scientist in a global finance company. Over the years, the company has collected basic bank details and gathered a lot of credit-related information. The management wants to build an intelligent system to segregate the people into credit score brackets to reduce the manual efforts.
+
+* Supervised Learning
+
+Before we dive into Classification, let’s take a look at what Supervised Learning is. Suppose you are trying to learn a new concept in maths and after solving a problem, you may refer to the solutions to see if you were right or not. Once you are confident in your ability to solve a particular type of problem, you will stop referring to the answers and solve the questions put before you by yourself.
+
+This is also how Supervised Learning works with machine learning models. In Supervised Learning, the model learns by example. Along with our input variable, we also give our model the corresponding correct labels. While training, the model gets to look at which label corresponds to our data and hence can find patterns between our data and those labels.
+
+* Classification Problems
+
+Classification is defined as the process of recognition, understanding, and grouping of objects and ideas into preset categories a.k.a “sub-populations.” With the help of these pre-categorized training datasets, classification in machine learning programs leverage a wide range of algorithms to classify future datasets into respective and relevant categories.
+
+Classification algorithms used in machine learning utilize input training data for the purpose of predicting the likelihood or probability that the data that follows will fall into one of the predetermined categories. One of the most common applications of classification is for filtering emails into “spam” or “non-spam”, as used by today’s top email service providers.
+
+* Classification Algorithms
+
+Based on training data, the Classification algorithm is a Supervised Learning technique used to categorize new observations. In classification, a program uses the dataset or observations provided to learn how to categorize new observations into various classes or groups. For instance, 0 or 1, red or blue, yes or no, spam or not spam, etc. Targets, labels, or categories can all be used to describe classes. The Classification algorithm uses labeled input data because it is a supervised learning technique and comprises input and output information. A discrete output function (y) is transferred to an input variable in the classification process (x).
+
+## Methods
+
+import packages
+
+```{python}
+import warnings
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from sklearn import preprocessing
+from sklearn import metrics
+from sklearn .metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+pd.set_option('display.max_columns',None)
+warnings.filterwarnings('ignore')
+%matplotlib inline 
+```
+
+Import data into python and see the basic information of the dataset. We can see that the training set of the data has 100,000 observations and 28 features.
+
+```{python}
+df = pd.read_csv('train.csv')
+df.shape
+```
+
+Check the initial column names.
+
+```{python}
+col_names = df.columns
+col_names
+```
+
+Drop some columns that will not be analyzed and see some basic inormation of the data frame.
+
+```{python}
+df.drop(['ID' ,'Customer_ID' ,'Month' ,'Name', 'Type_of_Loan', 'Credit_History_Age', 'SSN'], axis=1, inplace=True)
+df.info()
+```
+
+Then check how many empty value each column has.
+
+```{python}
+df.isnull().sum()
+```
+
+Check how many duplicated observations
+
+```{python}
+df.duplicated().sum()
+```
+
+Dropping all observations with more than 3 missing values
+
+```{python}
+size_before_cleaning = df.shape
+df = df[df.isnull().sum(axis=1) < 3]
+print("{} Records dropped".format(size_before_cleaning[0] - df.shape[0]))
+```
+
+Clean all the features separately.
+
+```{python}
+def filter_general(value):
+    if '-' in str(value):
+        return str(value).split('-')[1]
+    elif '_' in str(value):
+        return str(value).split('_')[0]
+    else:
+        return str(value)
+```
+
+```{python}
+def filter_delayed_payments(value):
+    if "__" in str(value):
+        return str(value).split("__")[1]
+    elif '_' in str(value):
+        return str(value).replace("_", "")
+    elif str(value) == '_':
+        return str(value)
+    else:
+        return str(value)
+```
+
+```{python}
+def Amount_invested_monthly(col):
+    if "__" in str(col):
+        return str(col).split("__")[1]
+    else:
+        return str(col)
+```
+
+```{python}
+df["Amount_invested_monthly"]=df["Amount_invested_monthly"].apply(Amount_invested_monthly)
+df["Amount_invested_monthly"]=df["Amount_invested_monthly"].astype("float")
+```
+
+```{python}
+df["Changed_Credit_Limit"]=df["Changed_Credit_Limit"].apply(lambda x:x.split("-")[-1])
+df.drop(df[df["Changed_Credit_Limit"]=="_"].index,inplace=True)
+df["Changed_Credit_Limit"]=df["Changed_Credit_Limit"].astype("float")
+```
+
+```{python}
+df.drop(df[df["Monthly_Balance"]=='__-333333333333333333333333333__'].index,inplace=True)
+for i in ['Age', 'Annual_Income', 'Num_of_Loan', 'Outstanding_Debt', 'Monthly_Balance']:
+    df[i] = df[i].apply(filter_general)
+    df[i] = df[i].astype(np.float64)
+    print(i + " Successfully Cleaned")
+```
+
+```{python}
+df['Num_of_Delayed_Payment'] = df['Num_of_Delayed_Payment'].apply(filter_delayed_payments)
+df['Num_of_Delayed_Payment'] = df['Num_of_Delayed_Payment'].astype(np.float64)
+```
+
+```{python}
+df['Occupation'] = df['Occupation'].replace('_______', np.nan)
+df['Occupation'] = df['Occupation'].fillna(np.random.choice(pd.Series(['Scientist', 'Teacher', 'Engineer', 'Entrepreneur',
+       'Developer', 'Lawyer', 'Media_Manager', 'Doctor', 'Journalist',
+       'Manager', 'Accountant', 'Musician', 'Mechanic', 'Writer',
+       'Architect'])))
+```
+
+```{python}
+df['Credit_Mix'] = df['Credit_Mix'].replace('_', np.nan)
+df['Credit_Mix'] = df['Credit_Mix'].fillna(np.random.choice(pd.Series(['Standard', 'Good', 'Bad'])))
+```
+
+```{python}
+df['Payment_of_Min_Amount'] = df['Payment_of_Min_Amount'].replace('NM', np.nan)
+df['Payment_of_Min_Amount'] = df['Payment_of_Min_Amount'].fillna(np.random.choice(pd.Series(['Yes', 'No'])))
+```
+
+```{python}
+df['Payment_Behaviour'] = df['Payment_Behaviour'].replace('!@9#%8', np.nan)
+df['Payment_Behaviour'] = df['Payment_Behaviour'].fillna(np.random.choice(pd.Series(['High_spent_Small_value_payments',
+       'Low_spent_Large_value_payments', 'Low_spent_Small_value_payments',
+       'High_spent_Medium_value_payments',
+       'High_spent_Large_value_payments',
+       'Low_spent_Medium_value_payments'])))
+```
+
+```{python}
+for i in ['Monthly_Inhand_Salary', 'Num_of_Delayed_Payment', 'Num_Credit_Inquiries', 'Amount_invested_monthly']:
+    df[i].fillna(df[i].median(), inplace=True)
+```
+
+```{python}
+df['Monthly_Balance'].fillna(df['Monthly_Balance'].median(), inplace=True)
+```
+
+** Data Visulizations**
+
+```{python}
+df.describe(include='all').style.background_gradient(cmap='Blues').set_properties(**{'font-family':'Segoe UI'})
+```
+
+Create histograms to roughly see the distributions of some features.
+
+```{python}
+df.hist(bins=200,figsize=[20,10])
+```
+
+Create pie charts to see the ratios of every nomial variables.
+
+```{python}
+def pie_plot(df, cols_list, rows, cols):
+    fig, axes = plt.subplots(rows, cols)
+    for ax, col in zip(axes.ravel(), cols_list):
+        df[col].value_counts().plot(ax=ax, kind='pie', figsize=(15, 15), fontsize=10, autopct='%1.0f%%')
+        ax.set_title(str(col), fontsize = 12)
+    plt.show()
+```
+
+```{python}
+pie_plot(df, ['Credit_Mix', 'Payment_of_Min_Amount', 'Payment_Behaviour', 'Credit_Score'], 2,2)
+```
+
+
+```{python}
+numeric_cols = df.select_dtypes(exclude = "object").columns
+cat_cols = df.select_dtypes(include = "object").columns
+print(numeric_cols)
+print(cat_cols)
+```
+
+**Plot the histogram of Credit Mix by occupation**
+
+```{python}
+fig = plt.figure(figsize= (17,9))
+sns.countplot(data=df,x="Occupation",hue="Credit_Mix")
+```
+
+**Plot the histogram of Payment of Min Amount by occupation**
+
+```{python}
+fig = plt.figure(figsize= (17,9))
+sns.countplot(data=df,x="Occupation",hue="Payment_of_Min_Amount").set(title="Count plot of Payment of Min Amount by occupation")
+```
+
+**Plot the histogram of Payment Behaviour by occupation**
+
+```{python}
+fig = plt.figure(figsize= (17,9))
+sns.countplot(data=df,x="Occupation",hue="Payment_Behaviour").set(title='Count plot of Payment Behaviour by occupation')
+```
+
+**Plot the histogram of Credit Score by occupation**
+
+```{python}
+fig = plt.figure(figsize= (17,9))
+sns.countplot(data=df,x="Occupation",hue="Credit_Score").set(title='Count plot of Credit Score by occupation')
+```
+
+### Checking multicollinearity with VIF
+
+Multicollinearity occurs when there are two or more independent variables in a multiple regression model, which have a high correlation among themselves. When some features are highly correlated, we might have difficulty in distinguishing between their individual effects on the dependent variable. Multicollinearity can be detected using various techniques, one such technique being the Variance Inflation Factor(VIF).
+
+In VIF method, we pick each feature and regress it against all of the other features. For each regression, the factor is calculated as :
+
+Where, R-squared is the coefficient of determination in linear regression. Its value lies between 0 and 1.
+
+As we see from the formula, greater the value of R-squared, greater is the VIF. Hence, greater VIF denotes greater correlation. This is in agreement with the fact that a higher R-squared value denotes a stronger collinearity. Generally, a VIF above 5 indicates a high multicollinearity.
+
+```{python}
+vif_df = df[numeric_cols]
+
+vif_data = pd.DataFrame()
+vif_data["feature"] = vif_df.columns
+vif_data["VIF"] = [variance_inflation_factor(vif_df.values ,i) for i in range(len(vif_df.columns))]
+vif_data.head(17)
+```
+
+**Plot the heatmap of all the numeric columns**
+```{python}
+vif_df = df[numeric_cols]
+
+vif_data = pd.DataFrame()
+vif_data["feature"] = vif_df.columns
+vif_data["VIF"] = [variance_inflation_factor(vif_df.values ,i) for i in range(len(vif_df.columns))]
+vif_data.head(17)
+```
+
+### Dealing with outliers
+
+An outlier is an observation that lies an abnormal distance from other values in a random sample from a population. In a sense, this definition leaves it up to the analyst (or a consensus process) to decide what will be considered abnormal. Before abnormal observations can be singled out, it is necessary to characterize normal observations. Two activities are essential for characterizing a set of data:
+
+Examination of the overall shape of the graphed data for important features, including symmetry and departures from assumptions.
+Examination of the data for unusual observations that are far removed from the mass of data. These points are often referred to as outliers. Two graphical techniques for identifying outliers, scatter plots and box plots, along with an analytic procedure for detecting outliers when the distribution is normal (Grubbs' Test)
+
+```{python}
+def box_plot(df, num_cols):
+    plt.figure(figsize=(20, 15))
+    for i in range(len(num_cols)):
+        if i == 16:
+            break
+        else:
+            plt.subplot(4,4, i+1)
+            l = num_cols[i]
+            sns.boxplot(df[l], palette="flare")
+```
+
+```{python}
+box_plot(df, numeric_cols)
+```
+
+**IQR (Inter Quartile Range)**
+
+IQR (Inter Quartile Range) Inter Quartile Range approach to finding the outliers is the most commonly used and most trusted approach used in the research field.
+
+IQR = Quartile3 – Quartile1
+
+To define the outlier base value is defined above and below datasets normal range namely Upper and Lower bounds, define the upper and the lower bound (1.5*IQR value is considered) :
+
+upper = Q3 +1.5*IQR
+
+lower = Q1 – 1.5*IQR
+
+In the above formula as according to statistics, the 0.5 scale-up of IQR (new_IQR = IQR + 0.5*IQR) is taken, to consider all the data between 2.7 standard deviations in the Gaussian Distribution.
+
+```{python}
+df_n = df.copy()
+for i in numeric_cols:
+    ''' Detection '''
+    # IQR
+    Q1 = np.percentile(df_n[i], 0.05,interpolation = 'midpoint')
+    Q3 = np.percentile(df_n[i], 99.95,interpolation = 'midpoint')
+    print("@ Feature " + i + "...")
+    print("Old Shape: ", df_n.shape)
+    df_n[numeric_cols] = df_n[numeric_cols][(df_n[i] < Q3) & (df_n[i] > Q1)]
+    df_n.dropna(inplace=True)
+    print("New Shape: ", df_n.shape)
+```
+
+```{python}
+df_n.drop(df_n[df_n["Age"] >= 80].index, inplace=True)
+df_n.drop(df_n[df_n["Annual_Income"] >= 500000].index, inplace=True)
+df_n.drop(df_n[df_n["Num_Bank_Accounts"] >= 20].index, inplace=True)
+df_n.drop(df_n[df_n["Num_Credit_Card"] >= 50].index, inplace=True)
+df_n.drop(df_n[df_n["Num_of_Loan"] >= 20].index, inplace=True)
+df_n.drop(df_n[df_n["Interest_Rate"] >= 35].index, inplace=True)
+df_n.drop(df_n[df_n["Num_of_Delayed_Payment"] >= 30].index, inplace=True)
+df_n.drop(df_n[df_n["Num_Credit_Inquiries"] >= 100].index, inplace=True)
+df_n.drop(df_n[df_n["Total_EMI_per_month"] >= 2000].index, inplace=True)
+df_n.drop(df_n[df_n["Amount_invested_monthly"] >= 1000].index, inplace=True)
+```
+
+```{python}
+box_plot(df_n, numeric_cols)
+```
+
+### Handling numirical data
+
+StandardScaler
+follows Standard Normal Distribution (SND). Therefore, it makes mean = 0 and scales the data to unit variance.
+
+MinMaxScaler
+scales all the data features in the range [0, 1] or else in the range [-1, 1] if there are negative values in the dataset. This scaling compresses all the inliers in the narrow range [0, 0.005]. In the presence of outliers, StandardScaler does not guarantee balanced feature scales, due to the influence of the outliers while computing the empirical mean and standard deviation. This leads to the shrinkage in the range of the feature values. By using RobustScaler(), we can remove the outliers and then use either StandardScaler or MinMaxScaler for preprocessing the dataset.
+
+```{python}
+df_num_clean = df_n[numeric_cols].copy()
+```
+
+```{python}
+cols = numeric_cols
+scaler = preprocessing.RobustScaler()
+robust_df_ = scaler.fit_transform(df_num_clean)
+robust_df_ = pd.DataFrame(robust_df_, columns =cols)
+
+scaler = preprocessing.StandardScaler()
+standard_df = scaler.fit_transform(df_num_clean)
+standard_df = pd.DataFrame(standard_df, columns =cols)
+  
+scaler = preprocessing.MinMaxScaler()
+minmax_df = scaler.fit_transform(df_num_clean)
+minmax_df = pd.DataFrame(minmax_df, columns =cols)
+
+fig, (ax1, ax2, ax3, ax4) = plt.subplots(ncols = 4, figsize =(20, 5))
+ax1.set_title('Before Scaling')
+  
+sns.kdeplot(df_num_clean['Age'], ax = ax1, color ='b')
+ax2.set_title('After Robust Scaling')
+  
+sns.kdeplot(robust_df_['Age'], ax = ax2, color ='g')
+ax3.set_title('After Standard Scaling')
+  
+sns.kdeplot(standard_df['Age'], ax = ax3, color ='b')
+ax4.set_title('After Min-Max Scaling')
+  
+sns.kdeplot(minmax_df['Age'], ax = ax4, color ='g')
+plt.show()
+```
+
+```{python}
+def RobustScaling(df_num, cols):
+    scaler = preprocessing.RobustScaler()
+    robust_df_temp = scaler.fit_transform(df_num)
+    robust_df_temp = pd.DataFrame(robust_df_temp, columns =cols)
+    return robust_df_temp
+```
+
+```{python}
+robust_scaled = RobustScaling(df_num_clean, numeric_cols)
+robust_scaled.head()
+```
+
+```{python}
+sns.set(rc = {'figure.figsize':(15,8)})
+for i in numeric_cols:
+    sns.kdeplot(robust_scaled[i], legend=True).set(title='KDE plot of robust scling')
+```
+
+```{python}
+clean_df = df.copy()
+clean_df.drop(labels=numeric_cols, axis="columns", inplace=True)
+clean_df[numeric_cols] = robust_scaled[numeric_cols]
+```
+
+### Categorical data encoding
+
+* Label Encoding
+is a popular encoding technique for handling categorical variables. In this technique, each label is assigned a unique integer based on alphabetical ordering.
+
+* Label Encoding challenges
+there is a very high probability that the model captures the relationship between values like they were ordinal which isn't suitble for example for ocean proximity here.
+
+* One-Hot Encoding
+One-Hot Encoding is another popular technique for treating categorical variables. It simply creates additional features based on the number of unique values in the categorical feature. Every unique value in the category will be added as a feature.
+
+```{python}
+clean_df['Credit_Score'].replace({"Poor":0, "Standard":1, "Good":2}, inplace=True)
+clean_df['Credit_Mix'].replace({"Bad":0, "Standard":1, "Good":2}, inplace=True)
+clean_df['Payment_of_Min_Amount'].replace({"Yes":1, "No":0}, inplace=True)
+clean_df = pd.get_dummies(clean_df, columns = ['Occupation', 'Payment_Behaviour'])
+```
+
+```{python}
+for i in numeric_cols:
+    clean_df[i].fillna(method='ffill', inplace=True)
+```
+
+```{python}
+clean_df.head()
+```
+
+```{python}
+sns.set(rc = {'figure.figsize':(15,8)})
+for i in numeric_cols:
+    sns.kdeplot(clean_df[i], legend=True).set(title='KDE plot of Categorical data')
+```
+
+## Conclusions
+
+The data went through the process of cleaning as follows:
+
+* Explored and visualized the data
+* Handled missing values.
+* Handled Outliers.
+* Handled categorical data encoding using one hot encoder and Label encoder.
+* Handled numerical values using a Robust Scaler
+
+## References
+
+https://www.kaggle.com/code/essammohamed4320/credit-score-classification
+
+
+

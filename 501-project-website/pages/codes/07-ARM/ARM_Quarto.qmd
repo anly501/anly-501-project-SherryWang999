@@ -1,0 +1,152 @@
+# Association Rule Mining (ARM)
+
+## Introduction
+
+Association rule mining is used to discover interesting connections hidden in large data sets, and the discovered patterns are usually represented in the form of association rules or frequent itemsets.
+
+Association rules reflect the interdependence and association between one thing and other things.
+
+If there is a certain association between two or more things, then the occurrence of one of them can predict the occurrence of other things associated with it.
+
+Association rule mining is used for knowledge discovery, not prediction, so it is an unsupervised machine learning algorithm.
+
+## Theory
+
+Here we first talk about some definitions related to ARM.
+
+1. Itemset
+   
+   A set that contains zero or more items, or a k-item set if it contains k items.
+
+    For example, if a customer buys a bag of items, then the bag of items is an item set, and each item in it is an item.
+
+2. Transaction $T$ and Transaction Set $D$
+
+    A transaction $T$ is an item set, and each transaction $T$ is associated with a unique identifier $T_id$.
+
+    The different transactions together form the transaction set $D$s, which constitutes the number of transaction databases discovered by the association rules.
+
+
+    In the above example, a bag of goods per customer (all goods put into one bag) is a transaction, so in terms of each bag unit, the sales volume for the day is a transaction set.
+
+3. Support count
+   
+   The number of transactions containing a specific set of items is denoted by the symbol $\sigma$, e.g. $\sigma({milk,beer,bread})=2$, which means that there are 2 purchases of these 3 items at the same time today.
+
+4. Support
+   
+   is the ratio of the number of transactions containing a particular set of items to the total number of transactions, and is denoted by the symbol $s$, e.g. $s({milk,beer,bread})=2/5$, indicating that 2/5 customers bought all 3 items at once today.
+
+5. Frequent itemset
+   
+   Refers to the set of all items that satisfy the minimum support threshold (min_support).
+   This minimum support threshold is given.
+
+6. Confidence
+   
+   Confidence is the ratio of the number of transactions containing the specified ${Y,X}$ to the number of transactions containing ${Y}$ or ${X}$, denoted by the symbol $s$.
+
+**Next we talk about the Apriori algorithm.**
+
+A common algorithm for finding frequent item sets.
+
+Apriori principles:
+
+1. if an itemset is frequent, then all its subsets must also be frequent.
+
+2. On the contrary, if an itemset is non-frequent, then all its supersets are also non-frequent.
+
+There exists an itemset {A,B}, and the one containing it is the superset, such as {A,B,C}.
+The usefulness of this principle is that if an itemset is found to be infrequent, its subsets or supersets can be cut out earlier to reduce the computational overhead.
+
+Features of Apriori algorithm:
+
+1. multiple scans of the database.
+
+2. large size of candidate items.
+
+3, large overhead of computing support.
+
+The disadvantage of Apriori algorithm is that it needs to generate candidate items repeatedly, and if the number of items is relatively large, the number of candidate items will reach a combined explosive growth.
+
+## Methods
+
+Import packages
+
+
+```{python}
+import numpy as np
+import pandas as pd
+from apyori import apriori
+from mlxtend.frequent_patterns import apriori, association_rules
+```
+
+```{python}
+dt = pd.read_csv("clean_record_data.csv")
+
+dt = dt.drop(columns=["Unnamed: 0"])
+dt.head()
+```
+
+```{python}
+dt.columns
+```
+
+**Apriori Algorithm and One-Hot Encoding**
+
+Apriori's algorithm transforms True/False or 1/0. So from the original data set, I chose some one-hot encoding variables with 1/0. The selected variables contain information of occupation and payment behaviour.
+
+```{python}
+# select some one-hot encoding variables
+sub = dt.drop(columns=['Credit_Mix', 'Payment_of_Min_Amount', 'Credit_Score', 'Age',
+       'Annual_Income', 'Monthly_Inhand_Salary', 'Num_Bank_Accounts',
+       'Num_Credit_Card', 'Interest_Rate', 'Num_of_Loan',
+       'Delay_from_due_date', 'Num_of_Delayed_Payment', 'Changed_Credit_Limit',
+       'Num_Credit_Inquiries', 'Outstanding_Debt', 'Credit_Utilization_Ratio',
+       'Total_EMI_per_month', 'Amount_invested_monthly', 'Monthly_Balance'])
+sub.columns
+```
+
+```{python}
+sub.head()
+```
+
+**Applying Apriori and Resulting**
+
+The next step is to create the Apriori Model. We can change all the parameters in the Apriori Model in the mlxtend package.
+
+I will try to use minimum support parameters for this modeling.
+
+For this, I set a min_support value with a threshold value of 0.5% and printed them on the screen as well.
+
+```{python}
+df = apriori(sub, min_support = 0.005, use_colnames = True, verbose = 1)
+df
+```
+
+Let's view our interpretation values using the Associan rule function.
+
+```{python}
+#Let's view our interpretation values using the Associan rule function.
+df_ar = association_rules(df, metric = "confidence", min_threshold = 0.001)
+df_ar
+```
+
+## Result
+
+**For example, if we examine our 1st index value;**
+
+* The probability of the occupation of a person is accountant is 6%.
+* High spent large value paymets is seen as 14%.
+* We can say that the support of both accountant and high spent large value payments is measured as 0.8%.
+* 6% of whose occupation is accountant is high spent large value payments.
+* The correlation with each other is seen as 0.99.
+
+## Conclusions
+
+From the data frame above containing the result, we find that among all combinations of payment behaviour and occupation, we can observe that the probability of certain combinations occurring is very high, that is, for people in a particular occupation, they may tend to have a certain payment habit, for example, 25% of people who are writers have a payment habit of low spent small value at the same time. by these relationships By comparing these relationships, we can make better decisions for credit evaluation in employment.
+
+## References
+https://en.wikipedia.org/wiki/Association_rule_learning
+
+https://blogs.oracle.com/datascience/overview-of-traditional-machine-learning-techniques

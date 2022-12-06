@@ -1,0 +1,143 @@
+
+
+
+# Naive Bayes with labeled text data
+
+## Introduction
+
+In this section, I accomplished the following things. First, use the text data related to personal credit obtained from Twitter above and perform sentiment analysis on the text data using packages such as nltk and scikit-learn. I used the categories obtained from the sentiment analysis as the labels of the dataset to make the dataset with three categories. And statistical analysis was performed on each category. Second, feature X and label y of the input model are selected and input to the tfidf model to get the importance vector of the text. Third, the Naive Bayesian Classifier is built using the MultinomialNB() function. and predictions are made on the test set, and finally the matrices and values of various model evaluations, such as classification accuracy, confusion matrix, etc., are output.
+
+## Theory
+
+Naive Bayes is a classification algorithm based on Bayes' theorem on the assumption of independent distribution.
+
+* Advantages
+
+The naive Bayes algorithm assumes that the data set attributes are independent of each other, so the logic of the algorithm is very simple and the algorithm is more stable, and the classification performance of naive Bayesian does not vary much when the data presents different characteristics. In other words, the robustness of the naive Bayesian algorithm is better, and it does not present much variability for different types of data sets. The naive Bayesian classification algorithm will have better results when the relationships between the attributes of the dataset are relatively independent.
+
+* Disadvantages
+
+The condition of attribute independence is at the same time a shortcoming of the naive Bayesian classifier. The independence of dataset attributes is difficult to be satisfied in many cases because the attributes of the dataset are often interrelated with each other, and if this problem occurs during the classification process, it will lead to a significant reduction in the effectiveness of the classification.
+
+* Application of NB
+
+Classification is a fundamental problem in the field of data analysis and machine learning. Text classification has been widely used in many aspects such as web information filtering, information retrieval and information recommendation. Data-driven classifier learning has been a hot topic in recent years with many approaches, such as neural networks, decision trees, support vector machines, and Naive Bayes. Compared with other elaborate and more complex classification algorithms, the naive Bayesian classification algorithm is one of the classifiers with better learning efficiency and classification results. Intuitive text classification algorithm and the simplest Bayesian classifier with good interpretability, the Naive Bayesian algorithm is characterized by the assumption that all features appear independent of each other and each feature is equally important. But in fact this assumption does not hold in the real world: firstly, the necessary connection between two adjacent words cannot be independent; secondly, for an article, some representative words in it determine its topic, and it is not necessary to read through the whole article and check all words. So a suitable method for feature selection is needed so that the plain Bayesian classifier can achieve higher classification efficiency.
+
+![](NB.png)
+
+## Method
+
+Import packages
+
+```{python}
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import confusion_matrix, accuracy_score, ConfusionMatrixDisplay
+```
+
+import text data
+
+```{python}
+txt = pd.read_csv("Labeled_text_data.csv")
+```
+
+```{python}
+txt = pd.read_csv("Labeled_text_data.csv")
+txt = txt.drop(columns=['Unnamed: 0'])
+
+txt.head()
+```
+
+Now let's count how many observations each label has. For label 0 (Neutral), the data set has 149 observations. For label 1 (Positive), the data set has 81 observations. For label 2 (negative), the data set has only 15 observations. So generally speaking this is a very unbalanced classification data set.
+
+```{python}
+txt.sentiment.value_counts()
+```
+
+```{python}
+txt["sentiment"] = txt['sentiment'].astype(str)
+```
+
+Now let's see the distributions of the labels.
+
+```{python}
+plt.hist(txt['sentiment'])
+plt.title("Count of labels")
+plt.xlabel("Labels")
+plt.ylabel("counts")
+plt.show()
+```
+
+Now, for the data set, we check the np.nan value. If any variable contains np.nan, then we delete it.
+
+```{python}
+txt.isna().sum()
+```
+
+```{python}
+txt = txt.dropna()
+txt.isna().sum()
+```
+
+Now the data set does not contain np.nan value. Next, we select features `X` and labels `y` and split the data set into training set and test set.
+
+```{python}
+X = txt['text']
+y = txt['sentiment']
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Build the model
+model = make_pipeline(TfidfVectorizer(), MultinomialNB())
+# Train the model using the training data
+model.fit(X_train, y_train)
+# Predict the categories of the test data
+predicted_categories = model.predict(X_test)
+```
+
+plot the confusion matrix
+
+```{python}
+cm = confusion_matrix(y_test, predicted_categories, labels=model.classes_)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=model.classes_)
+disp.plot()
+plt.title("Confusion Matrix of Naive Bayes Classifier")
+plt.show()
+```
+
+Print confusion matrix.
+
+```{python}
+print(confusion_matrix(y_test, predicted_categories))
+```
+
+Get the classification report.
+
+```{python}
+from sklearn.metrics import classification_report
+target_names = ['0','1','2']
+print(classification_report(y_test, predicted_categories, target_names=target_names))
+```
+
+## Result
+
+Generally speaking, the model prediction accuracy is 0.66. It performs well but definitely not the best. I think it is partly because the dataset is too small and the content is not completely clean. The twitter data fetched from twitter api contains information from various language and it may not make sense to analyze the complex contents all together. But the result is acceptable. From the confusion matrix, we can see that all the data from label=2 are mis-classified. It is a terrible result but we could just say that twitter text data contain multiple languages, and they are very oral and simplified so basic data processing may not lead to a good result.
+
+## Conclusion
+
+Naive Bayes algorithms are mostly used in sentiment analysis, spam filtering, recommendation systems etc. They are fast and easy to implement but their biggest disadvantage is that the requirement of predictors to be independent. In most of the real life cases, the predictors are dependent, this hinders the performance of the classifier.
+
+* In spite of my apparently over-simplified assumptions, naive Bayes classifiers have worked quite well in many real-world situations, famously document classification and spam filtering. They require a small amount of training data to estimate the necessary parameters.
+
+* Naive Bayes learners and classifiers can be extremely fast compared to more sophisticated methods. The decoupling of the class conditional feature distributions means that each distribution can be independently estimated as a one dimensional distribution. This in turn helps to alleviate problems stemming from the curse of dimensionality.
+
+## Reference
+
+https://towardsdatascience.com/naive-bayes-classifier-81d512f50a7c
+
+https://www.geeksforgeeks.org/naive-bayes-classifiers/

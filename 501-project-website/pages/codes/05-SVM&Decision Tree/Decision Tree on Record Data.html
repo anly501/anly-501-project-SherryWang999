@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.242">
+<meta name="generator" content="quarto-1.2.269">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -109,11 +109,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<section id="classify-record-data-by-decision-tree" class="level2">
-<h2 class="anchored" data-anchor-id="classify-record-data-by-decision-tree">Classify record data by Decision Tree</h2>
+<section id="classify-record-data-by-decision-tree" class="level1">
+<h1>Classify record data by Decision Tree</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>A decision tree is a decision support tool that uses a tree-like model of decisions and their possible consequences, including chance event outcomes, resource costs, and utility. It is one way to display an algorithm that only contains conditional control statements.</p>
 <p>In this document, I use the decision tree classification algorithm in scikit-learn to classify my cleaned record data. To improve the accuracy of the classifier, I also perform parameter selection to improve the performance of the model by reducing the number of parameters and eliminating some parameters that are not highly relevant. Next, I debug the parameters of the model through a series of methods to find the most suitable hyperparameters for the model, and train the optimal model to arrive at the final classifier.</p>
 <p>The dataset used is a cleaned credit score dataset. The reason for using decision trees for this dataset is that I tried this dataset with two methods (decision trees and SVM) before formally completing this document, and the classification results of SVM were very poor and unsatisfactory, so I decided to use decision tree classification for this dataset.</p>
+</section>
+<section id="theory" class="level2">
+<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<p>A decision tree is a flowchart-like tree structure where an internal node represents feature(or attribute), the branch represents a decision rule, and each leaf node represents the outcome. The topmost node in a decision tree is known as the root node. It learns to partition on the basis of the attribute value. It partitions the tree in recursively manner call recursive partitioning. This flowchart-like structure helps you in decision making. It’s visualization like a flowchart diagram which easily mimics the human level thinking. That is why decision trees are easy to understand and interpret.</p>
+<p><img src="dt.png" class="img-fluid"></p>
+<p>Decision Tree is a white box type of ML algorithm. It shares internal decision-making logic, which is not available in the black box type of algorithms such as Neural Network. Its training time is faster compared to the neural network algorithm. The time complexity of decision trees is a function of the number of records and number of attributes in the given data. The decision tree is a distribution-free or non-parametric method, which does not depend upon probability distribution assumptions. Decision trees can handle high dimensional data with good accuracy.</p>
+<p>The basic idea behind any decision tree algorithm is as follows:</p>
+<ul>
+<li>Select the best attribute using Attribute Selection Measures(ASM) to split the records.</li>
+<li>Make that attribute a decision node and breaks the dataset into smaller subsets.</li>
+<li>Starts tree building by repeating this process recursively for each child until one of the condition will match:
+<ul>
+<li>All the tuples belong to the same attribute value.</li>
+<li>here are no more remaining attributes.</li>
+<li>There are no more instances.</li>
+</ul></li>
+</ul>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -156,9 +178,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 Name: Credit_Score, dtype: int64</code></pre>
 </div>
 </div>
-</section>
-<section id="baseline-model" class="level2">
-<h2 class="anchored" data-anchor-id="baseline-model">Baseline Model</h2>
+<section id="baseline-model" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-model">Baseline Model</h3>
 <p><strong>Decision Tree Model on Recorded Data</strong></p>
 <p>Use DecisionTreeClassifier() function to build the model and fit data. Here I set the initial parameter max_depth=6. Then make predictions on both training set and test set.</p>
 <div class="cell" data-execution_count="4">
@@ -179,18 +200,22 @@ Name: Credit_Score, dtype: int64</code></pre>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>cm1 <span class="op">=</span> confusion_matrix(y_train, yp_train, labels<span class="op">=</span>model.classes_)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>disp1 <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm1, display_labels<span class="op">=</span>model.classes_)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>disp1.plot()</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>cm2 <span class="op">=</span> confusion_matrix(y_test, yp_test, labels<span class="op">=</span>model.classes_)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>disp2 <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm2, display_labels<span class="op">=</span>model.classes_)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>disp2.plot()</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>disp1.plot()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Confusion Matrix on Train set"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>cm2 <span class="op">=</span> confusion_matrix(y_test, yp_test, labels<span class="op">=</span>model.classes_)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>disp2 <span class="op">=</span> ConfusionMatrixDisplay(confusion_matrix<span class="op">=</span>cm2, display_labels<span class="op">=</span>model.classes_)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>disp2.plot()</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Confusion Matrix on Test set"</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="Decision%20Tree%20on%20Record%20Data_files/figure-html/cell-6-output-1.png" width="521" height="429"></p>
+<p><img src="Decision%20Tree%20on%20Record%20Data_files/figure-html/cell-6-output-1.png" width="521" height="449"></p>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="Decision%20Tree%20on%20Record%20Data_files/figure-html/cell-6-output-2.png" width="513" height="434"></p>
+<p><img src="Decision%20Tree%20on%20Record%20Data_files/figure-html/cell-6-output-2.png" width="513" height="449"></p>
 </div>
 </div>
 <p><strong>Visualize the tree.</strong></p>
@@ -201,117 +226,120 @@ Name: Credit_Score, dtype: int64</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>|--- feature_1 &lt;= -0.30
 |   |--- feature_0 &lt;= 0.32
-|   |   |--- feature_4 &lt;= -1.55
-|   |   |   |--- feature_2 &lt;= 0.47
-|   |   |   |   |--- class: 0
-|   |   |   |--- feature_2 &gt;  0.47
+|   |   |--- feature_38 &lt;= 0.56
+|   |   |   |--- feature_4 &lt;= -1.55
 |   |   |   |   |--- class: 2
-|   |   |--- feature_4 &gt;  -1.55
-|   |   |   |--- feature_38 &lt;= 0.56
-|   |   |   |   |--- feature_11 &lt;= 0.17
-|   |   |   |   |   |--- feature_10 &lt;= -1.39
+|   |   |   |--- feature_4 &gt;  -1.55
+|   |   |   |   |--- feature_15 &lt;= 11.33
+|   |   |   |   |   |--- feature_3 &lt;= -1.16
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_10 &gt;  -1.39
+|   |   |   |   |   |--- feature_3 &gt;  -1.16
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |--- feature_11 &gt;  0.17
-|   |   |   |   |   |--- feature_11 &lt;= 0.18
+|   |   |   |   |--- feature_15 &gt;  11.33
+|   |   |   |   |   |--- feature_15 &lt;= 14.32
 |   |   |   |   |   |   |--- class: 2
-|   |   |   |   |   |--- feature_11 &gt;  0.18
+|   |   |   |   |   |--- feature_15 &gt;  14.32
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |--- feature_38 &gt;  0.56
-|   |   |   |   |--- feature_10 &lt;= -1.22
-|   |   |   |   |   |--- feature_9 &lt;= 0.02
+|   |   |--- feature_38 &gt;  0.56
+|   |   |   |--- feature_3 &lt;= -1.34
+|   |   |   |   |--- class: 0
+|   |   |   |--- feature_3 &gt;  -1.34
+|   |   |   |   |--- feature_9 &lt;= -1.23
+|   |   |   |   |   |--- feature_2 &lt;= -0.79
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_9 &gt;  0.02
-|   |   |   |   |   |   |--- class: 2
-|   |   |   |   |--- feature_10 &gt;  -1.22
-|   |   |   |   |   |--- feature_10 &lt;= 1.91
+|   |   |   |   |   |--- feature_2 &gt;  -0.79
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_10 &gt;  1.91
+|   |   |   |   |--- feature_9 &gt;  -1.23
+|   |   |   |   |   |--- feature_4 &lt;= -1.20
+|   |   |   |   |   |   |--- class: 1
+|   |   |   |   |   |--- feature_4 &gt;  -1.20
 |   |   |   |   |   |   |--- class: 1
 |   |--- feature_0 &gt;  0.32
-|   |   |--- feature_15 &lt;= 2.36
-|   |   |   |--- feature_7 &lt;= 0.38
-|   |   |   |   |--- feature_13 &lt;= -1.00
-|   |   |   |   |   |--- feature_7 &lt;= -0.12
+|   |   |--- feature_13 &lt;= -0.47
+|   |   |   |--- feature_13 &lt;= -0.60
+|   |   |   |   |--- feature_5 &lt;= 1.18
+|   |   |   |   |   |--- feature_3 &lt;= -1.19
+|   |   |   |   |   |   |--- class: 2
+|   |   |   |   |   |--- feature_3 &gt;  -1.19
+|   |   |   |   |   |   |--- class: 2
+|   |   |   |   |--- feature_5 &gt;  1.18
+|   |   |   |   |   |--- feature_13 &lt;= -0.92
+|   |   |   |   |   |   |--- class: 2
+|   |   |   |   |   |--- feature_13 &gt;  -0.92
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_7 &gt;  -0.12
+|   |   |   |--- feature_13 &gt;  -0.60
+|   |   |   |   |--- feature_7 &lt;= 0.13
+|   |   |   |   |   |--- feature_15 &lt;= -0.38
 |   |   |   |   |   |   |--- class: 2
-|   |   |   |   |--- feature_13 &gt;  -1.00
-|   |   |   |   |   |--- feature_7 &lt;= 0.01
+|   |   |   |   |   |--- feature_15 &gt;  -0.38
 |   |   |   |   |   |   |--- class: 2
-|   |   |   |   |   |--- feature_7 &gt;  0.01
+|   |   |   |   |--- feature_7 &gt;  0.13
+|   |   |   |   |   |--- feature_10 &lt;= 0.92
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |--- feature_7 &gt;  0.38
-|   |   |   |   |--- feature_11 &lt;= -0.31
-|   |   |   |   |   |--- feature_15 &lt;= -0.68
-|   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_15 &gt;  -0.68
+|   |   |   |   |   |--- feature_10 &gt;  0.92
 |   |   |   |   |   |   |--- class: 2
-|   |   |   |   |--- feature_11 &gt;  -0.31
-|   |   |   |   |   |--- feature_15 &lt;= -0.66
-|   |   |   |   |   |   |--- class: 2
-|   |   |   |   |   |--- feature_15 &gt;  -0.66
-|   |   |   |   |   |   |--- class: 2
-|   |   |--- feature_15 &gt;  2.36
-|   |   |   |--- feature_9 &lt;= 2.52
-|   |   |   |   |--- feature_13 &lt;= 1.89
-|   |   |   |   |   |--- feature_13 &lt;= 1.27
-|   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_13 &gt;  1.27
-|   |   |   |   |   |   |--- class: 1
-|   |   |   |   |--- feature_13 &gt;  1.89
-|   |   |   |   |   |--- feature_13 &lt;= 3.36
-|   |   |   |   |   |   |--- class: 2
-|   |   |   |   |   |--- feature_13 &gt;  3.36
+|   |   |--- feature_13 &gt;  -0.47
+|   |   |   |--- feature_13 &lt;= -0.47
+|   |   |   |   |--- feature_9 &lt;= -1.27
+|   |   |   |   |   |--- feature_17 &lt;= 3.19
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |--- feature_9 &gt;  2.52
-|   |   |   |   |--- feature_8 &lt;= 2.57
-|   |   |   |   |   |--- feature_6 &lt;= 0.97
+|   |   |   |   |   |--- feature_17 &gt;  3.19
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_6 &gt;  0.97
+|   |   |   |   |--- feature_9 &gt;  -1.27
+|   |   |   |   |   |--- feature_13 &lt;= -0.47
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |   |--- feature_8 &gt;  2.57
-|   |   |   |   |   |--- feature_13 &lt;= 1.55
+|   |   |   |   |   |--- feature_13 &gt;  -0.47
+|   |   |   |   |   |   |--- class: 1
+|   |   |   |--- feature_13 &gt;  -0.47
+|   |   |   |   |--- feature_3 &lt;= -0.85
+|   |   |   |   |   |--- feature_10 &lt;= -1.22
+|   |   |   |   |   |   |--- class: 1
+|   |   |   |   |   |--- feature_10 &gt;  -1.22
 |   |   |   |   |   |   |--- class: 2
-|   |   |   |   |   |--- feature_13 &gt;  1.55
+|   |   |   |   |--- feature_3 &gt;  -0.85
+|   |   |   |   |   |--- feature_32 &lt;= 1.10
+|   |   |   |   |   |   |--- class: 2
+|   |   |   |   |   |--- feature_32 &gt;  1.10
 |   |   |   |   |   |   |--- class: 1
 |--- feature_1 &gt;  -0.30
 |   |--- feature_0 &lt;= -1.00
 |   |   |--- feature_13 &lt;= 3.48
-|   |   |   |--- feature_38 &lt;= 0.56
-|   |   |   |   |--- feature_13 &lt;= -1.01
-|   |   |   |   |   |--- feature_13 &lt;= -1.04
-|   |   |   |   |   |   |--- class: 0
-|   |   |   |   |   |--- feature_13 &gt;  -1.04
-|   |   |   |   |   |   |--- class: 1
-|   |   |   |   |--- feature_13 &gt;  -1.01
+|   |   |   |--- feature_7 &lt;= 2.61
+|   |   |   |   |--- feature_38 &lt;= 0.56
 |   |   |   |   |   |--- feature_28 &lt;= 1.81
 |   |   |   |   |   |   |--- class: 0
 |   |   |   |   |   |--- feature_28 &gt;  1.81
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |--- feature_38 &gt;  0.56
-|   |   |   |   |--- feature_2 &lt;= 2.54
-|   |   |   |   |   |--- feature_4 &lt;= -1.17
+|   |   |   |   |--- feature_38 &gt;  0.56
+|   |   |   |   |   |--- feature_5 &lt;= 2.17
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |   |   |--- feature_4 &gt;  -1.17
+|   |   |   |   |   |--- feature_5 &gt;  2.17
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |   |--- feature_2 &gt;  2.54
-|   |   |   |   |   |--- feature_7 &lt;= -0.12
+|   |   |   |--- feature_7 &gt;  2.61
+|   |   |   |   |--- feature_2 &lt;= 1.39
+|   |   |   |   |   |--- feature_11 &lt;= 1.11
+|   |   |   |   |   |   |--- class: 1
+|   |   |   |   |   |--- feature_11 &gt;  1.11
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |   |   |--- feature_7 &gt;  -0.12
+|   |   |   |   |--- feature_2 &gt;  1.39
+|   |   |   |   |   |--- feature_5 &lt;= 0.68
+|   |   |   |   |   |   |--- class: 1
+|   |   |   |   |   |--- feature_5 &gt;  0.68
 |   |   |   |   |   |   |--- class: 0
 |   |   |--- feature_13 &gt;  3.48
-|   |   |   |--- feature_5 &lt;= 2.17
+|   |   |   |--- feature_7 &lt;= 0.69
+|   |   |   |   |--- feature_38 &lt;= 0.56
+|   |   |   |   |   |--- class: 0
+|   |   |   |   |--- feature_38 &gt;  0.56
+|   |   |   |   |   |--- class: 1
+|   |   |   |--- feature_7 &gt;  0.69
 |   |   |   |   |--- feature_2 &lt;= 1.62
-|   |   |   |   |   |--- feature_11 &lt;= -1.22
+|   |   |   |   |   |--- feature_11 &lt;= -0.38
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |   |   |--- feature_11 &gt;  -1.22
+|   |   |   |   |   |--- feature_11 &gt;  -0.38
 |   |   |   |   |   |   |--- class: 1
 |   |   |   |   |--- feature_2 &gt;  1.62
 |   |   |   |   |   |--- class: 0
-|   |   |   |--- feature_5 &gt;  2.17
-|   |   |   |   |--- class: 0
 |   |--- feature_0 &gt;  -1.00
 |   |   |--- feature_0 &lt;= 0.32
 |   |   |   |--- feature_38 &lt;= 0.56
@@ -321,9 +349,9 @@ Name: Credit_Score, dtype: int64</code></pre>
 |   |   |   |   |   |--- feature_37 &gt;  1.05
 |   |   |   |   |   |   |--- class: 1
 |   |   |   |   |--- feature_33 &gt;  1.05
-|   |   |   |   |   |--- feature_14 &lt;= 1.29
+|   |   |   |   |   |--- feature_12 &lt;= -1.07
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_14 &gt;  1.29
+|   |   |   |   |   |--- feature_12 &gt;  -1.07
 |   |   |   |   |   |   |--- class: 1
 |   |   |   |--- feature_38 &gt;  0.56
 |   |   |   |   |--- feature_7 &lt;= 0.75
@@ -332,33 +360,33 @@ Name: Credit_Score, dtype: int64</code></pre>
 |   |   |   |   |   |--- feature_9 &gt;  2.93
 |   |   |   |   |   |   |--- class: 0
 |   |   |   |   |--- feature_7 &gt;  0.75
-|   |   |   |   |   |--- feature_15 &lt;= -0.43
+|   |   |   |   |   |--- feature_2 &lt;= -0.91
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_15 &gt;  -0.43
+|   |   |   |   |   |--- feature_2 &gt;  -0.91
 |   |   |   |   |   |   |--- class: 1
 |   |   |--- feature_0 &gt;  0.32
 |   |   |   |--- feature_38 &lt;= 0.56
 |   |   |   |   |--- feature_33 &lt;= 1.05
-|   |   |   |   |   |--- feature_13 &lt;= -0.92
+|   |   |   |   |   |--- feature_30 &lt;= 1.80
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_13 &gt;  -0.92
+|   |   |   |   |   |--- feature_30 &gt;  1.80
 |   |   |   |   |   |   |--- class: 1
 |   |   |   |   |--- feature_33 &gt;  1.05
-|   |   |   |   |   |--- feature_3 &lt;= 0.95
+|   |   |   |   |   |--- feature_3 &lt;= 0.99
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_3 &gt;  0.95
+|   |   |   |   |   |--- feature_3 &gt;  0.99
 |   |   |   |   |   |   |--- class: 1
 |   |   |   |--- feature_38 &gt;  0.56
-|   |   |   |   |--- feature_3 &lt;= -1.32
-|   |   |   |   |   |--- feature_2 &lt;= 1.62
+|   |   |   |   |--- feature_15 &lt;= 0.69
+|   |   |   |   |   |--- feature_3 &lt;= 1.33
+|   |   |   |   |   |   |--- class: 1
+|   |   |   |   |   |--- feature_3 &gt;  1.33
 |   |   |   |   |   |   |--- class: 0
-|   |   |   |   |   |--- feature_2 &gt;  1.62
+|   |   |   |   |--- feature_15 &gt;  0.69
+|   |   |   |   |   |--- feature_13 &lt;= 3.39
 |   |   |   |   |   |   |--- class: 1
-|   |   |   |   |--- feature_3 &gt;  -1.32
-|   |   |   |   |   |--- feature_15 &lt;= 0.67
-|   |   |   |   |   |   |--- class: 1
-|   |   |   |   |   |--- feature_15 &gt;  0.67
-|   |   |   |   |   |   |--- class: 1
+|   |   |   |   |   |--- feature_13 &gt;  3.39
+|   |   |   |   |   |   |--- class: 0
 </code></pre>
 </div>
 </div>
@@ -376,36 +404,39 @@ Name: Credit_Score, dtype: int64</code></pre>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> record.columns.delete(<span class="dv">2</span>)</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>class_names <span class="op">=</span> [<span class="st">"0"</span>,<span class="st">"1"</span>,<span class="st">"2"</span>]</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>plot_tree(model,feature_names,class_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<p><img src="Decision%20Tree%20on%20Record%20Data_files/figure-html/cell-8-output-1.svg" class="img-fluid"></p>
+<div class="cell-output cell-output-error">
+<pre><code>ExecutableNotFound: failed to execute PosixPath('dot'), make sure the Graphviz executables are on your systems' PATH</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="39">
+<pre><code>&lt;graphviz.sources.Source at 0x7fb0f0ad69d0&gt;</code></pre>
 </div>
 </div>
 <p><strong>Accuracy, precision and recall</strong></p>
 <div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score,confusion_matrix</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(train) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_test,yp_test) <span class="op">*</span> <span class="dv">100</span>))</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(test) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_train,yp_train) <span class="op">*</span> <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score,confusion_matrix</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(train) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_test,yp_test) <span class="op">*</span> <span class="dv">100</span>))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy(test) of model is </span><span class="sc">{}</span><span class="st">%"</span>.<span class="bu">format</span>(accuracy_score(y_train,yp_train) <span class="op">*</span> <span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Accuracy(train) of model is 59.39161554192229%
-Accuracy(test) of model is 59.788596480016366%</code></pre>
+<pre><code>Accuracy(train) of model is 59.48875255623722%
+Accuracy(test) of model is 59.80904663914416%</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># train</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAIN------"</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_train,yp_train))</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># test</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test,yp_test))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># train</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TRAIN------"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_train,yp_train))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># test</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"------TEST------"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test,yp_test))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>------TRAIN------
               precision    recall  f1-score   support
 
-           0       0.60      0.39      0.48     22656
-           1       0.66      0.68      0.67     41641
-           2       0.47      0.69      0.56     13942
+           0       0.60      0.40      0.48     22737
+           1       0.66      0.67      0.66     41602
+           2       0.47      0.71      0.57     13900
 
     accuracy                           0.60     78239
    macro avg       0.58      0.59      0.57     78239
@@ -414,56 +445,56 @@ weighted avg       0.61      0.60      0.59     78239
 ------TEST------
               precision    recall  f1-score   support
 
-           0       0.60      0.40      0.48      5672
-           1       0.65      0.67      0.66     10379
-           2       0.46      0.67      0.55      3509
+           0       0.60      0.39      0.48      5591
+           1       0.66      0.66      0.66     10418
+           2       0.46      0.71      0.56      3551
 
     accuracy                           0.59     19560
-   macro avg       0.57      0.58      0.56     19560
-weighted avg       0.60      0.59      0.59     19560
+   macro avg       0.58      0.59      0.57     19560
+weighted avg       0.61      0.59      0.59     19560
 </code></pre>
 </div>
 </div>
 </section>
-<section id="feature-selection" class="level2">
-<h2 class="anchored" data-anchor-id="feature-selection">Feature Selection</h2>
+<section id="feature-selection" class="level3">
+<h3 class="anchored" data-anchor-id="feature-selection">Feature Selection</h3>
 <p>In this part, I used SelctFromModel() function to complete feature selection. Linear models penalized with the L1 norm have sparse solutions: many of their estimated coefficients are zero. When the goal is to reduce the dimensionality of the data to use with another classifier, they can be used along with SelectFromModel to select the non-zero coefficients. In particular, sparse estimators useful for this purpose are the Lasso for regression, and of LogisticRegression and LinearSVC for classification:</p>
 <div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X.shape</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> SelectFromModel</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> LinearSVC</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(X, y)</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>selectmodel <span class="op">=</span> SelectFromModel(model, prefit<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>X_new <span class="op">=</span> selectmodel.transform(X)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>X_new.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X.shape</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> SelectFromModel</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> LinearSVC</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#lsvc = LinearSVC(C=0.01, penalty="l1", dual=False).fit(X, y)</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>selectmodel <span class="op">=</span> SelectFromModel(model, prefit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>X_new <span class="op">=</span> selectmodel.transform(X)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>X_new.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
 <pre><code>(97799, 2)</code></pre>
 </div>
 </div>
 </section>
-<section id="model-tuning" class="level2">
-<h2 class="anchored" data-anchor-id="model-tuning">Model Tuning</h2>
+<section id="model-tuning" class="level3">
+<h3 class="anchored" data-anchor-id="model-tuning">Model Tuning</h3>
 <p><strong>Here I used GridSearchCV() function to complete model tuning</strong></p>
 <p>The parameters to be tuned are max_depth, min_samples_leaf and criterion.</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the parameter grid based on the results of random search </span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'max_depth'</span>: [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>],</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'min_samples_leaf'</span>: [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>],</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'criterion'</span>: [<span class="st">"gini"</span>, <span class="st">"entropy"</span>]</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>grid_search <span class="op">=</span> GridSearchCV(estimator<span class="op">=</span>model, </span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                           param_grid<span class="op">=</span>params, </span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                           cv<span class="op">=</span><span class="dv">4</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">1</span>, scoring <span class="op">=</span> <span class="st">"accuracy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the parameter grid based on the results of random search </span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'max_depth'</span>: [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>],</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'min_samples_leaf'</span>: [<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>],</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'criterion'</span>: [<span class="st">"gini"</span>, <span class="st">"entropy"</span>]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>grid_search <span class="op">=</span> GridSearchCV(estimator<span class="op">=</span>model, </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>                           param_grid<span class="op">=</span>params, </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                           cv<span class="op">=</span><span class="dv">4</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">1</span>, scoring <span class="op">=</span> <span class="st">"accuracy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>grid_search.fit(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>grid_search.fit(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fitting 4 folds for each of 50 candidates, totalling 200 fits</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="44">
 <pre><code>GridSearchCV(cv=4, estimator=DecisionTreeClassifier(max_depth=6), n_jobs=-1,
              param_grid={'criterion': ['gini', 'entropy'],
                          'max_depth': [2, 3, 5, 10, 20],
@@ -472,52 +503,81 @@ weighted avg       0.60      0.59      0.59     19560
 </div>
 </div>
 <div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>grid_search.best_estimator_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
-<pre><code>DecisionTreeClassifier(max_depth=3, min_samples_leaf=5)</code></pre>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>grid_search.best_estimator_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="45">
+<pre><code>DecisionTreeClassifier(max_depth=3, min_samples_leaf=10)</code></pre>
 </div>
 </div>
 <div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_model(dt_classifier):</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Train Accuracy :"</span>, accuracy_score(y_train, dt_classifier.predict(X_train)))</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Train Confusion Matrix:"</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(confusion_matrix(y_train, dt_classifier.predict(X_train)))</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"-"</span><span class="op">*</span><span class="dv">50</span>)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Test Accuracy :"</span>, accuracy_score(y_test, dt_classifier.predict(X_test)))</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Test Confusion Matrix:"</span>)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(confusion_matrix(y_test, dt_classifier.predict(X_test)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_model(dt_classifier):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Train Accuracy :"</span>, accuracy_score(y_train, dt_classifier.predict(X_train)))</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Train Confusion Matrix:"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(confusion_matrix(y_train, dt_classifier.predict(X_train)))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"-"</span><span class="op">*</span><span class="dv">50</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Test Accuracy :"</span>, accuracy_score(y_test, dt_classifier.predict(X_test)))</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Test Confusion Matrix:"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(confusion_matrix(y_test, dt_classifier.predict(X_test)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Fit the best model and evaluate the results.</p>
 <div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>dt_best <span class="op">=</span> grid_search.best_estimator_</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>evaluate_model(dt_best)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dt_best <span class="op">=</span> grid_search.best_estimator_</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>evaluate_model(dt_best)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Train Accuracy : 0.5949079103771776
+<pre><code>Train Accuracy : 0.5945755952913508
 Train Confusion Matrix:
-[[ 8883 10553  3220]
- [ 5690 27617  8334]
- [  217  3680 10045]]
+[[ 8923 10467  3347]
+ [ 5707 27327  8568]
+ [  228  3403 10269]]
 --------------------------------------------------
-Test Accuracy : 0.5949386503067484
+Test Accuracy : 0.5952965235173824
 Test Confusion Matrix:
-[[2244 2575  853]
- [1403 6898 2078]
- [  66  948 2495]]</code></pre>
+[[2204 2496  891]
+ [1386 6812 2220]
+ [  55  868 2628]]</code></pre>
 </div>
 </div>
 <p>Plot the best tree.</p>
 <div class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot_tree(dt_best,feature_names,class_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
-<p><img src="Decision%20Tree%20on%20Record%20Data_files/figure-html/cell-17-output-1.svg" class="img-fluid"></p>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>plot_tree(dt_best,feature_names,class_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>ExecutableNotFound: failed to execute PosixPath('dot'), make sure the Graphviz executables are on your systems' PATH</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="48">
+<pre><code>&lt;graphviz.sources.Source at 0x7fb0f0eeae50&gt;</code></pre>
 </div>
 </div>
 </section>
-<section id="result-summary" class="level2">
-<h2 class="anchored" data-anchor-id="result-summary">Result Summary</h2>
-<p>In the whole process of modeling, the model perfomance was obviously promoted.</p>
-<p>In the model that was non-optimal at the beginning, although the accuracy improvement of the model on the training and test sets was small, the final decision tree drawn was more concise and easy to understand at a glance due to the optimization of a series of parameters, which greatly reduced the complexity.</p>
-<p>I think this makes a lot of sense in practice, because in the workplace people tend to like to achieve the same goals with less consumption.</p>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p>For data preprocessing, I standardized the data set. For the decision tree model, first I randomly chose the parameter <code>max_depth=6</code> and use all the other parameters as default. The result of the baseline model turns out that the performance is not good. The original accuracy score is only about 0.59 which means only 59% of the data were correctly classified. And we could see the tree plot that the original tree was very complex and there were many nodes. So I didn’t think it is a good model.</p>
+<p>So in order to improve the model performance, I did feature selection and model tuning. In the final result, the best model was given through GridSearch function: <code>max_depth=2</code> and <code>min_samples_leaf=5</code>. Finally I plot the decision tree and it looked better. But the model accuracy has not changed a lot.</p>
+</section>
+<section id="conlusions" class="level2">
+<h2 class="anchored" data-anchor-id="conlusions">Conlusions</h2>
+<p>Here I summarized some pros and cons of the decision tree classifier.</p>
+<ul>
+<li>Pros
+<ul>
+<li>Decision trees are easy to interpret and visualize.</li>
+<li>It can easily capture Non-linear patterns.</li>
+<li>It requires fewer data preprocessing from the user, for example, there is no need to normalize columns.</li>
+<li>It can be used for feature engineering such as predicting missing values, suitable for variable selection.</li>
+<li>The decision tree has no assumptions about distribution because of the non-parametric nature of the algorithm. (Source)</li>
+</ul></li>
+<li>Cons
+<ul>
+<li>Sensitive to noisy data. It can overfit noisy data.</li>
+<li>The small variation(or variance) in data can result in the different decision tree. This can be reduced by bagging and boosting algorithms.</li>
+<li>Decision trees are biased with imbalance dataset, so it is recommended that balance out the dataset before creating the decision tree.</li>
+</ul></li>
+</ul>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>https://www.datacamp.com/tutorial/decision-tree-classification-python</p>
+<p>https://why-change.com/2021/11/13/how-to-create-decision-trees-for-business-rules-analysis/</p>
+</section>
 </section>
 
 </main>

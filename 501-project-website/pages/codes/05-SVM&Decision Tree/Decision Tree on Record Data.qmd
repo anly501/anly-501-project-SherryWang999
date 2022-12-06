@@ -1,4 +1,6 @@
-## Classify record data by Decision Tree 
+# Classify record data by Decision Tree 
+
+## Introduction
 
 A decision tree is a decision support tool that uses a tree-like model of decisions and their possible consequences, including chance event outcomes, resource costs, and utility. It is one way to display an algorithm that only contains conditional control statements.
 
@@ -6,6 +8,25 @@ In this document, I use the decision tree classification algorithm in scikit-lea
 
 The dataset used is a cleaned credit score dataset. The reason for using decision trees for this dataset is that I tried this dataset with two methods (decision trees and SVM) before formally completing this document, and the classification results of SVM were very poor and unsatisfactory, so I decided to use decision tree classification for this dataset.
 
+
+## Theory
+
+A decision tree is a flowchart-like tree structure where an internal node represents feature(or attribute), the branch represents a decision rule, and each leaf node represents the outcome. The topmost node in a decision tree is known as the root node. It learns to partition on the basis of the attribute value. It partitions the tree in recursively manner call recursive partitioning. This flowchart-like structure helps you in decision making. It's visualization like a flowchart diagram which easily mimics the human level thinking. That is why decision trees are easy to understand and interpret.
+
+![](dt.png)
+
+Decision Tree is a white box type of ML algorithm. It shares internal decision-making logic, which is not available in the black box type of algorithms such as Neural Network. Its training time is faster compared to the neural network algorithm. The time complexity of decision trees is a function of the number of records and number of attributes in the given data. The decision tree is a distribution-free or non-parametric method, which does not depend upon probability distribution assumptions. Decision trees can handle high dimensional data with good accuracy.
+
+The basic idea behind any decision tree algorithm is as follows:
+
+* Select the best attribute using Attribute Selection Measures(ASM) to split the records.
+* Make that attribute a decision node and breaks the dataset into smaller subsets.
+* Starts tree building by repeating this process recursively for each child until one of the condition will match:
+    * All the tuples belong to the same attribute value.
+    * here are no more remaining attributes.
+    * There are no more instances.
+
+## Methods
 ```{python}
 import pandas as pd
 import numpy as np
@@ -43,7 +64,7 @@ print(y_test.shape)
 print(record['Credit_Score'].value_counts())
 ```
 
-## Baseline Model
+### Baseline Model
 
 **Decision Tree Model on Recorded Data**
 
@@ -70,12 +91,16 @@ import seaborn as sns
 
 cm1 = confusion_matrix(y_train, yp_train, labels=model.classes_)
 disp1 = ConfusionMatrixDisplay(confusion_matrix=cm1, display_labels=model.classes_)
+
 disp1.plot()
+plt.title("Confusion Matrix on Train set")
 plt.show()
 
 cm2 = confusion_matrix(y_test, yp_test, labels=model.classes_)
 disp2 = ConfusionMatrixDisplay(confusion_matrix=cm2, display_labels=model.classes_)
+
 disp2.plot()
+plt.title("Confusion Matrix on Test set")
 plt.show()
 ```
 
@@ -124,7 +149,7 @@ print("------TEST------")
 print(classification_report(y_test,yp_test))
 ```
 
-## Feature Selection
+### Feature Selection
 
 In this part, I used SelctFromModel() function to complete feature selection. Linear models penalized with the L1 norm have sparse solutions: many of their estimated coefficients are zero. When the goal is to reduce the dimensionality of the data to use with another classifier, they can be used along with SelectFromModel to select the non-zero coefficients. In particular, sparse estimators useful for this purpose are the Lasso for regression, and of LogisticRegression and LinearSVC for classification:
 
@@ -139,7 +164,7 @@ X_new = selectmodel.transform(X)
 X_new.shape
 ```
 
-## Model Tuning
+### Model Tuning
 
 **Here I used GridSearchCV() function to complete model tuning**
 
@@ -191,10 +216,29 @@ Plot the best tree.
 plot_tree(dt_best,feature_names,class_names)
 ```
 
-## Result Summary
+## Results
 
-In the whole process of modeling, the model perfomance was obviously promoted.
+For data preprocessing, I standardized the data set. For the decision tree model, first I randomly chose the parameter `max_depth=6` and use all the other parameters as default. The result of the baseline model turns out that the performance is not good. The original accuracy score is only about 0.59 which means only 59% of the data were correctly classified. And we could see the tree plot that the original tree was very complex and there were many nodes. So I didn't think it is a good model.
 
-In the model that was non-optimal at the beginning, although the accuracy improvement of the model on the training and test sets was small, the final decision tree drawn was more concise and easy to understand at a glance due to the optimization of a series of parameters, which greatly reduced the complexity.
+So in order to improve the model performance, I did feature selection and model tuning. In the final result, the best model was given through GridSearch function: `max_depth=2` and `min_samples_leaf=5`. Finally I plot the decision tree and it looked better. But the model accuracy has not changed a lot.
 
-I think this makes a lot of sense in practice, because in the workplace people tend to like to achieve the same goals with less consumption.
+## Conlusions
+
+Here I summarized some pros and cons of the decision tree classifier.
+
+* Pros
+    * Decision trees are easy to interpret and visualize.
+    * It can easily capture Non-linear patterns.
+    * It requires fewer data preprocessing from the user, for example, there is no need to normalize columns.
+    * It can be used for feature engineering such as predicting missing values, suitable for variable selection.
+    * The decision tree has no assumptions about distribution because of the non-parametric nature of the algorithm. (Source)
+* Cons
+    * Sensitive to noisy data. It can overfit noisy data.
+    * The small variation(or variance) in data can result in the different decision tree. This can be reduced by bagging and boosting algorithms.
+    * Decision trees are biased with imbalance dataset, so it is recommended that balance out the dataset before creating the decision tree.
+
+## References
+
+https://www.datacamp.com/tutorial/decision-tree-classification-python
+
+https://why-change.com/2021/11/13/how-to-create-decision-trees-for-business-rules-analysis/
