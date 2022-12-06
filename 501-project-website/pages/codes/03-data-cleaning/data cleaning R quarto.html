@@ -137,17 +137,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Categorical variables are often called nominal.</p>
 <p>Some examples include:</p>
 <ul>
-<li><p>A "<em>pet</em>" variable with the values: "<em>dog</em>" and "<em>cat</em>".</p></li>
-<li><p>A "<em>color</em>" variable with the values: "<em>red</em>", "<em>green</em>" and "<em>blue</em>".</p></li>
-<li><p>A "<em>place</em>" variable with the values: "first", "<em>second</em>"&nbsp;<em>and</em>&nbsp;"<em>third</em>".</p></li>
+<li><p>A “<em>pet</em>” variable with the values: “<em>dog</em>” and “<em>cat</em>”.</p></li>
+<li><p>A “<em>color</em>” variable with the values: “<em>red</em>”, “<em>green</em>” and “<em>blue</em>”.</p></li>
+<li><p>A “<em>place</em>” variable with the values: “first”, “<em>second</em>”&nbsp;<em>and</em>&nbsp;“<em>third</em>”.</p></li>
 </ul>
 <p>Each value represents a different category.</p>
 <p>Some categories may have a natural relationship to each other, such as a natural ordering.</p>
-<p>The "<em>place</em>" variable above does have a natural ordering of values. This type of categorical variable is called an ordinal variable.</p>
+<p>The “<em>place</em>” variable above does have a natural ordering of values. This type of categorical variable is called an ordinal variable.</p>
 <p>For categorical variables where no such ordinal relationship exists, the integer encoding is not enough.</p>
 <p>In fact, using this encoding and allowing the model to assume a natural ordering between categories may result in poor performance or unexpected results (predictions halfway between categories).</p>
 <p>In this case, a one-hot encoding can be applied to the integer representation. This is where the integer encoded variable is removed and a new binary variable is added for each unique integer value.</p>
-<p>In the "<em>color</em>" variable example, there are 3 categories and therefore 3 binary variables are needed. A "1" value is placed in the binary variable for the color and "0" values for the other colors.</p>
+<p>In the “<em>color</em>” variable example, there are 3 categories and therefore 3 binary variables are needed. A “1” value is placed in the binary variable for the color and “0” values for the other colors.</p>
 <p><strong>Standardization</strong></p>
 <p>Standardization is the process of developing, promoting and possibly mandating standards-based and compatible technologies and processes within a given industry. Standards for technologies can mandate the quality and consistency of technologies and ensure their compatibility, interoperability and safety.</p>
 </section>
@@ -158,7 +158,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"train.csv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"test.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>You can add options to executable code like this</p>
+<p>First let’s see the size of train set and test set.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -194,6 +194,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>drop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'ID'</span> ,<span class="st">'Customer_ID'</span> ,<span class="st">'Month'</span> ,<span class="st">'Name'</span>, <span class="st">'Type_of_Loan'</span>, <span class="st">'Credit_History_Age'</span>, <span class="st">'SSN'</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> train[,<span class="sc">!</span>(<span class="fu">names</span>(train) <span class="sc">%in%</span> drop)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Then see the summary of data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -255,6 +256,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
                    </code></pre>
 </div>
 </div>
+<p>Next we count how many null values are in the data set and calculated the ratio of null values.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>num_na <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(train))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>num_complete <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">complete.cases</span>(train))</span>
@@ -313,6 +315,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">delete.na</span>(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>After dropping values, we see the size after cleaning the data set.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>size_after_cleaning <span class="ot">&lt;-</span> <span class="fu">dim</span>(train)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(size_after_cleaning)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -320,6 +323,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>[1] 100000     21</code></pre>
 </div>
 </div>
+<p>Since many variables contain ’<em>’ signals and we definitely want to remove them, we write a function to remove all the ‘_’ and ‘-’.</em></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>filter_general <span class="ot">&lt;-</span> <span class="cf">function</span>(value){</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">str_detect</span>(<span class="fu">toString</span>(value),<span class="st">"-"</span>)){</span>
@@ -333,6 +337,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The variable ‘Delayed_Payments’ contains much strange characters like ‘__’, we write a function to remove all the illegal characters.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>filter_delayed_payments <span class="ot">&lt;-</span> <span class="cf">function</span>(value){</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">str_detect</span>(<span class="fu">toString</span>(value),<span class="st">"__"</span>)){</span>
@@ -349,6 +354,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The same with the variable ‘Amount_invested_monthly’.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>Amount_invested_monthly <span class="ot">&lt;-</span> <span class="cf">function</span>(col){</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">str_detect</span>(<span class="fu">toString</span>(col),<span class="st">"__"</span>)){</span>
@@ -359,6 +365,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Apply our function to certain variables and remove illegal values.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Amount_invested_monthly <span class="ot">&lt;-</span> <span class="fu">lapply</span>(train<span class="sc">$</span>Amount_invested_monthly, Amount_invested_monthly)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Amount_invested_monthly <span class="ot">&lt;-</span> <span class="fu">as.double</span>(train<span class="sc">$</span>Amount_invested_monthly)</span>
@@ -378,11 +385,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Num_of_Delayed_Payment <span class="ot">&lt;-</span> <span class="fu">lapply</span>(train<span class="sc">$</span>Num_of_Delayed_Payment, filter_delayed_payments)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Num_of_Delayed_Payment <span class="ot">&lt;-</span> <span class="fu">as.double</span>(train<span class="sc">$</span>Num_of_Delayed_Payment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Remove illegal values with NA. Next we did one-hot encoding for the variable ‘Occupation’.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Occupation <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"_______"</span>,<span class="cn">NA</span>,train<span class="sc">$</span>Occupation)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>occupation <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Scientist"</span>,<span class="st">"Teacher"</span>,<span class="st">"Engineer"</span>,<span class="st">"Entrepreneur"</span>,<span class="st">"Developer"</span>,<span class="st">"Lawyer"</span>,<span class="st">"Media_Manager"</span>,<span class="st">"Doctor"</span>,<span class="st">"Journalist"</span>,<span class="st">"Manager"</span>,<span class="st">"Accountant"</span>,<span class="st">"Musician"</span>,<span class="st">"Mechanic"</span>,<span class="st">"Writer"</span>,<span class="st">"Architect"</span>)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Occupation[<span class="fu">is.na</span>(train<span class="sc">$</span>Occupation)] <span class="ot">&lt;-</span> <span class="fu">sample</span>(occupation, <span class="fu">sum</span>(<span class="fu">is.na</span>(train<span class="sc">$</span>Occupation)), <span class="at">replace =</span> <span class="cn">TRUE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>We remove ‘_’ characters and did one-hot encoding.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Credit_Mix <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"_"</span>,<span class="cn">NA</span>,train<span class="sc">$</span>Credit_Mix)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>credit <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Standard"</span>, <span class="st">"Good"</span>, <span class="st">"Bad"</span>)</span>
@@ -396,6 +405,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Payment_Behaviour <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"!@9#%8"</span>, <span class="cn">NA</span>, train<span class="sc">$</span>Payment_Behaviour)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Also one-hot encoding for these categorical variables.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>behaviour <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"High_spent_Small_value_payments"</span>,<span class="st">"Low_spent_Large_value_payments"</span>,<span class="st">"Low_spent_Small_value_payments"</span>,<span class="st">"High_spent_Medium_value_payments"</span>,<span class="st">"High_spent_Large_value_payments"</span>,<span class="st">"Low_spent_Medium_value_payments"</span>)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Payment_Behaviour[<span class="fu">is.na</span>(train<span class="sc">$</span>Payment_Behaviour)] <span class="ot">&lt;-</span> <span class="fu">sample</span>(behaviour, <span class="fu">sum</span>(<span class="fu">is.na</span>(train<span class="sc">$</span>Payment_Behaviour)), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -407,6 +417,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  train<span class="sc">$</span>i[<span class="fu">is.na</span>(train<span class="sc">$</span>i)] <span class="ot">&lt;-</span> <span class="fu">median</span>(train<span class="sc">$</span>i, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Fill the na values with median.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>train<span class="sc">$</span>Monthly_Balance[<span class="fu">is.na</span>(train<span class="sc">$</span>Monthly_Balance)] <span class="ot">&lt;-</span> <span class="fu">median</span>(train<span class="sc">$</span>Monthly_Balance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>

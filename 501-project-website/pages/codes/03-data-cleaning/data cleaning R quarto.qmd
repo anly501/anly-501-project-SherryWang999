@@ -57,7 +57,7 @@ train <- read.csv("train.csv")
 test <- read.csv("test.csv")
 ```
 
-You can add options to executable code like this
+First let's see the size of train set and test set.
 
 ```{r}
 dim(train)
@@ -77,9 +77,13 @@ drop <- c('ID' ,'Customer_ID' ,'Month' ,'Name', 'Type_of_Loan', 'Credit_History_
 train <- train[,!(names(train) %in% drop)]
 ```
 
+Then see the summary of data.
+
 ```{r}
 summary(train)
 ```
+
+Next we count how many null values are in the data set and calculated the ratio of null values.
 
 ```{r}
 num_na <- sum(is.na(train))
@@ -114,10 +118,14 @@ delete.na <- function(df, n=3){
 train <- delete.na(train)
 ```
 
+After dropping values, we see the size after cleaning the data set.
+
 ```{r}
 size_after_cleaning <- dim(train)
 print(size_after_cleaning)
 ```
+
+Since many variables contain '*' signals and we definitely want to remove them, we write a function to remove all the '\_' and '-'.*
 
 ```{r}
 filter_general <- function(value){
@@ -132,6 +140,8 @@ filter_general <- function(value){
   }
 }
 ```
+
+The variable 'Delayed_Payments' contains much strange characters like '\_\_', we write a function to remove all the illegal characters.
 
 ```{r}
 filter_delayed_payments <- function(value){
@@ -150,6 +160,8 @@ filter_delayed_payments <- function(value){
 }
 ```
 
+The same with the variable 'Amount_invested_monthly'.
+
 ```{r}
 Amount_invested_monthly <- function(col){
   if(str_detect(toString(col),"__")){
@@ -160,6 +172,8 @@ Amount_invested_monthly <- function(col){
   }
 }
 ```
+
+Apply our function to certain variables and remove illegal values.
 
 ```{r}
 train$Amount_invested_monthly <- lapply(train$Amount_invested_monthly, Amount_invested_monthly)
@@ -183,11 +197,15 @@ train$Num_of_Delayed_Payment <- lapply(train$Num_of_Delayed_Payment, filter_dela
 train$Num_of_Delayed_Payment <- as.double(train$Num_of_Delayed_Payment)
 ```
 
+Remove illegal values with NA. Next we did one-hot encoding for the variable 'Occupation'.
+
 ```{r}
 train$Occupation <- gsub("_______",NA,train$Occupation)
 occupation <- c("Scientist","Teacher","Engineer","Entrepreneur","Developer","Lawyer","Media_Manager","Doctor","Journalist","Manager","Accountant","Musician","Mechanic","Writer","Architect")
 train$Occupation[is.na(train$Occupation)] <- sample(occupation, sum(is.na(train$Occupation)), replace = TRUE) 
 ```
+
+We remove '\_' characters and did one-hot encoding.
 
 ```{r}
 train$Credit_Mix <- gsub("_",NA,train$Credit_Mix)
@@ -205,6 +223,8 @@ train$Payment_of_Min_Amount[is.na(train$Payment_of_Min_Amount)] <- sample(paymen
 train$Payment_Behaviour <- gsub("!@9#%8", NA, train$Payment_Behaviour)
 ```
 
+Also one-hot encoding for these categorical variables.
+
 ```{r}
 behaviour <- c("High_spent_Small_value_payments","Low_spent_Large_value_payments","Low_spent_Small_value_payments","High_spent_Medium_value_payments","High_spent_Large_value_payments","Low_spent_Medium_value_payments")
 train$Payment_Behaviour[is.na(train$Payment_Behaviour)] <- sample(behaviour, sum(is.na(train$Payment_Behaviour)), replace = TRUE)
@@ -217,6 +237,8 @@ for(i in col){
   train$i[is.na(train$i)] <- median(train$i, na.rm = TRUE)
 }
 ```
+
+Fill the na values with median.
 
 ```{r}
 train$Monthly_Balance[is.na(train$Monthly_Balance)] <- median(train$Monthly_Balance, na.rm = TRUE)

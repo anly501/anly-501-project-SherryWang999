@@ -72,7 +72,7 @@ Use DecisionTreeClassifier() function to build the model and fit data. Here I se
 
 ```{python}
 from sklearn import tree
-model = tree.DecisionTreeClassifier(max_depth=6)
+model = tree.DecisionTreeClassifier(max_depth=4, min_samples_leaf= 6)
 model = model.fit(X_train, y_train)
 
 yp_train = model.predict(X_train)
@@ -128,7 +128,10 @@ def plot_tree(model,X,Y):
 feature_names = record.columns.delete(2)
 class_names = ["0","1","2"]
 plot_tree(model,feature_names,class_names)
+
 ```
+
+![](t2.jpeg)
 
 **Accuracy, precision and recall**
 
@@ -215,6 +218,8 @@ Plot the best tree.
 ```{python}
 plot_tree(dt_best,feature_names,class_names)
 ```
+
+![](t1.jpeg)
 
 ## Results
 

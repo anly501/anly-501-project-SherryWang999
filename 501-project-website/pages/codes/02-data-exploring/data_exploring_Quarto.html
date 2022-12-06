@@ -262,7 +262,7 @@ dtype: int64</code></pre>
 <pre><code>101 Records dropped</code></pre>
 </div>
 </div>
-<p>Clean all the features separately.</p>
+<p>Since many variables contain irregular characters like ’_’ and ‘-’, we write a function to remove these characters.</p>
 <div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> filter_general(value):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'-'</span> <span class="kw">in</span> <span class="bu">str</span>(value):</span>
@@ -272,6 +272,7 @@ dtype: int64</code></pre>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">str</span>(value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The variable contains more illegal characters, we write a special function for it to remove these characters.</p>
 <div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> filter_delayed_payments(value):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"__"</span> <span class="kw">in</span> <span class="bu">str</span>(value):</span>
@@ -283,6 +284,7 @@ dtype: int64</code></pre>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">str</span>(value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The same with the variable Amount_invested_monthly.</p>
 <div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Amount_invested_monthly(col):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"__"</span> <span class="kw">in</span> <span class="bu">str</span>(col):</span>
@@ -290,15 +292,18 @@ dtype: int64</code></pre>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">str</span>(col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Apply our function to the variables. Here we changed the type of Amount_invested_monthly to float because it is a numerical variable.</p>
 <div class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Amount_invested_monthly"</span>]<span class="op">=</span>df[<span class="st">"Amount_invested_monthly"</span>].<span class="bu">apply</span>(Amount_invested_monthly)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Amount_invested_monthly"</span>]<span class="op">=</span>df[<span class="st">"Amount_invested_monthly"</span>].astype(<span class="st">"float"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Apply the function to variables.</p>
 <div class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Changed_Credit_Limit"</span>]<span class="op">=</span>df[<span class="st">"Changed_Credit_Limit"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x:x.split(<span class="st">"-"</span>)[<span class="op">-</span><span class="dv">1</span>])</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>df.drop(df[df[<span class="st">"Changed_Credit_Limit"</span>]<span class="op">==</span><span class="st">"_"</span>].index,inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Changed_Credit_Limit"</span>]<span class="op">=</span>df[<span class="st">"Changed_Credit_Limit"</span>].astype(<span class="st">"float"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Remove illegal values. Also print information to show we have cleaned the data.</p>
 <div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df.drop(df[df[<span class="st">"Monthly_Balance"</span>]<span class="op">==</span><span class="st">'__-333333333333333333333333333__'</span>].index,inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> [<span class="st">'Age'</span>, <span class="st">'Annual_Income'</span>, <span class="st">'Num_of_Loan'</span>, <span class="st">'Outstanding_Debt'</span>, <span class="st">'Monthly_Balance'</span>]:</span>
@@ -309,16 +314,19 @@ dtype: int64</code></pre>
 <pre><code>Age Successfully Cleaned</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Annual_Income Successfully Cleaned
+<pre><code>
+Annual_Income Successfully Cleaned
 Num_of_Loan Successfully Cleaned
 Outstanding_Debt Successfully Cleaned
 Monthly_Balance Successfully Cleaned</code></pre>
 </div>
 </div>
+<p>Apply the function to variables.</p>
 <div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Num_of_Delayed_Payment'</span>] <span class="op">=</span> df[<span class="st">'Num_of_Delayed_Payment'</span>].<span class="bu">apply</span>(filter_delayed_payments)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Num_of_Delayed_Payment'</span>] <span class="op">=</span> df[<span class="st">'Num_of_Delayed_Payment'</span>].astype(np.float64)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Here we did one-hot encoding for occupation and remove irregular characters with np.nan.</p>
 <div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Occupation'</span>] <span class="op">=</span> df[<span class="st">'Occupation'</span>].replace(<span class="st">'_______'</span>, np.nan)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Occupation'</span>] <span class="op">=</span> df[<span class="st">'Occupation'</span>].fillna(np.random.choice(pd.Series([<span class="st">'Scientist'</span>, <span class="st">'Teacher'</span>, <span class="st">'Engineer'</span>, <span class="st">'Entrepreneur'</span>,</span>
@@ -326,6 +334,7 @@ Monthly_Balance Successfully Cleaned</code></pre>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>       <span class="st">'Manager'</span>, <span class="st">'Accountant'</span>, <span class="st">'Musician'</span>, <span class="st">'Mechanic'</span>, <span class="st">'Writer'</span>,</span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>       <span class="st">'Architect'</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The same with above: one-hot encoding</p>
 <div class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Credit_Mix'</span>] <span class="op">=</span> df[<span class="st">'Credit_Mix'</span>].replace(<span class="st">'_'</span>, np.nan)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Credit_Mix'</span>] <span class="op">=</span> df[<span class="st">'Credit_Mix'</span>].fillna(np.random.choice(pd.Series([<span class="st">'Standard'</span>, <span class="st">'Good'</span>, <span class="st">'Bad'</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -342,6 +351,7 @@ Monthly_Balance Successfully Cleaned</code></pre>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>       <span class="st">'High_spent_Large_value_payments'</span>,</span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>       <span class="st">'Low_spent_Medium_value_payments'</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Fill the null values with median.</p>
 <div class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> [<span class="st">'Monthly_Inhand_Salary'</span>, <span class="st">'Num_of_Delayed_Payment'</span>, <span class="st">'Num_Credit_Inquiries'</span>, <span class="st">'Amount_invested_monthly'</span>]:</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    df[i].fillna(df[i].median(), inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -350,401 +360,402 @@ Monthly_Balance Successfully Cleaned</code></pre>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Monthly_Balance'</span>].fillna(df[<span class="st">'Monthly_Balance'</span>].median(), inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>** Data Visulizations**</p>
+<p>settings</p>
 <div class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df.describe(include<span class="op">=</span><span class="st">'all'</span>).style.background_gradient(cmap<span class="op">=</span><span class="st">'Blues'</span>).set_properties(<span class="op">**</span>{<span class="st">'font-family'</span>:<span class="st">'Segoe UI'</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 
 <style type="text/css">
-#T_80464_row0_col0, #T_80464_row0_col3, #T_80464_row0_col4, #T_80464_row0_col5, #T_80464_row0_col6, #T_80464_row0_col7, #T_80464_row0_col8, #T_80464_row0_col9, #T_80464_row0_col10, #T_80464_row0_col11, #T_80464_row0_col13, #T_80464_row0_col14, #T_80464_row0_col16, #T_80464_row0_col17, #T_80464_row0_col19, #T_80464_row10_col2 {
+#T_078cf_row0_col0, #T_078cf_row0_col3, #T_078cf_row0_col4, #T_078cf_row0_col5, #T_078cf_row0_col6, #T_078cf_row0_col7, #T_078cf_row0_col8, #T_078cf_row0_col9, #T_078cf_row0_col10, #T_078cf_row0_col11, #T_078cf_row0_col13, #T_078cf_row0_col14, #T_078cf_row0_col16, #T_078cf_row0_col17, #T_078cf_row0_col19, #T_078cf_row10_col2 {
   background-color: #08306b;
   color: #f1f1f1;
   font-family: Segoe UI;
 }
-#T_80464_row0_col1, #T_80464_row0_col12, #T_80464_row0_col15, #T_80464_row0_col18, #T_80464_row0_col20, #T_80464_row1_col1, #T_80464_row1_col12, #T_80464_row1_col15, #T_80464_row1_col18, #T_80464_row1_col20, #T_80464_row2_col1, #T_80464_row2_col12, #T_80464_row2_col15, #T_80464_row2_col18, #T_80464_row2_col20, #T_80464_row3_col1, #T_80464_row3_col12, #T_80464_row3_col15, #T_80464_row3_col18, #T_80464_row3_col20, #T_80464_row4_col1, #T_80464_row4_col12, #T_80464_row4_col15, #T_80464_row4_col18, #T_80464_row4_col20, #T_80464_row5_col1, #T_80464_row5_col12, #T_80464_row5_col15, #T_80464_row5_col18, #T_80464_row5_col20, #T_80464_row6_col1, #T_80464_row6_col12, #T_80464_row6_col15, #T_80464_row6_col18, #T_80464_row6_col20, #T_80464_row7_col1, #T_80464_row7_col12, #T_80464_row7_col15, #T_80464_row7_col18, #T_80464_row7_col20, #T_80464_row8_col1, #T_80464_row8_col12, #T_80464_row8_col15, #T_80464_row8_col18, #T_80464_row8_col20, #T_80464_row9_col1, #T_80464_row9_col12, #T_80464_row9_col15, #T_80464_row9_col18, #T_80464_row9_col20, #T_80464_row10_col1, #T_80464_row10_col12, #T_80464_row10_col15, #T_80464_row10_col18, #T_80464_row10_col20 {
+#T_078cf_row0_col1, #T_078cf_row0_col12, #T_078cf_row0_col15, #T_078cf_row0_col18, #T_078cf_row0_col20, #T_078cf_row1_col1, #T_078cf_row1_col12, #T_078cf_row1_col15, #T_078cf_row1_col18, #T_078cf_row1_col20, #T_078cf_row2_col1, #T_078cf_row2_col12, #T_078cf_row2_col15, #T_078cf_row2_col18, #T_078cf_row2_col20, #T_078cf_row3_col1, #T_078cf_row3_col12, #T_078cf_row3_col15, #T_078cf_row3_col18, #T_078cf_row3_col20, #T_078cf_row4_col1, #T_078cf_row4_col12, #T_078cf_row4_col15, #T_078cf_row4_col18, #T_078cf_row4_col20, #T_078cf_row5_col1, #T_078cf_row5_col12, #T_078cf_row5_col15, #T_078cf_row5_col18, #T_078cf_row5_col20, #T_078cf_row6_col1, #T_078cf_row6_col12, #T_078cf_row6_col15, #T_078cf_row6_col18, #T_078cf_row6_col20, #T_078cf_row7_col1, #T_078cf_row7_col12, #T_078cf_row7_col15, #T_078cf_row7_col18, #T_078cf_row7_col20, #T_078cf_row8_col1, #T_078cf_row8_col12, #T_078cf_row8_col15, #T_078cf_row8_col18, #T_078cf_row8_col20, #T_078cf_row9_col1, #T_078cf_row9_col12, #T_078cf_row9_col15, #T_078cf_row9_col18, #T_078cf_row9_col20, #T_078cf_row10_col1, #T_078cf_row10_col12, #T_078cf_row10_col15, #T_078cf_row10_col18, #T_078cf_row10_col20 {
   font-family: Segoe UI;
 }
-#T_80464_row0_col2, #T_80464_row4_col0, #T_80464_row4_col4, #T_80464_row4_col5, #T_80464_row4_col6, #T_80464_row4_col7, #T_80464_row4_col8, #T_80464_row4_col9, #T_80464_row4_col10, #T_80464_row4_col11, #T_80464_row4_col14, #T_80464_row5_col4, #T_80464_row5_col5, #T_80464_row5_col7, #T_80464_row5_col8, #T_80464_row5_col9, #T_80464_row5_col10, #T_80464_row5_col11, #T_80464_row5_col14, #T_80464_row5_col19, #T_80464_row6_col0, #T_80464_row6_col2, #T_80464_row6_col3, #T_80464_row6_col4, #T_80464_row6_col5, #T_80464_row6_col6, #T_80464_row6_col7, #T_80464_row6_col8, #T_80464_row6_col9, #T_80464_row6_col10, #T_80464_row6_col11, #T_80464_row6_col13, #T_80464_row6_col14, #T_80464_row6_col16, #T_80464_row6_col17, #T_80464_row6_col19, #T_80464_row7_col0, #T_80464_row7_col2, #T_80464_row7_col4, #T_80464_row7_col5, #T_80464_row7_col6, #T_80464_row7_col7, #T_80464_row7_col8, #T_80464_row7_col9, #T_80464_row7_col10, #T_80464_row7_col11, #T_80464_row7_col14, #T_80464_row7_col16, #T_80464_row7_col17, #T_80464_row7_col19, #T_80464_row8_col0, #T_80464_row8_col2, #T_80464_row8_col4, #T_80464_row8_col5, #T_80464_row8_col6, #T_80464_row8_col7, #T_80464_row8_col8, #T_80464_row8_col9, #T_80464_row8_col10, #T_80464_row8_col11, #T_80464_row8_col14, #T_80464_row8_col16, #T_80464_row8_col17, #T_80464_row8_col19, #T_80464_row9_col0, #T_80464_row9_col2, #T_80464_row9_col4, #T_80464_row9_col5, #T_80464_row9_col6, #T_80464_row9_col7, #T_80464_row9_col8, #T_80464_row9_col9, #T_80464_row9_col10, #T_80464_row9_col11, #T_80464_row9_col14, #T_80464_row9_col16, #T_80464_row9_col17, #T_80464_row10_col8, #T_80464_row10_col10, #T_80464_row10_col14 {
+#T_078cf_row0_col2, #T_078cf_row4_col0, #T_078cf_row4_col4, #T_078cf_row4_col5, #T_078cf_row4_col6, #T_078cf_row4_col7, #T_078cf_row4_col8, #T_078cf_row4_col9, #T_078cf_row4_col10, #T_078cf_row4_col11, #T_078cf_row4_col14, #T_078cf_row5_col4, #T_078cf_row5_col5, #T_078cf_row5_col7, #T_078cf_row5_col8, #T_078cf_row5_col9, #T_078cf_row5_col10, #T_078cf_row5_col11, #T_078cf_row5_col14, #T_078cf_row5_col19, #T_078cf_row6_col0, #T_078cf_row6_col2, #T_078cf_row6_col3, #T_078cf_row6_col4, #T_078cf_row6_col5, #T_078cf_row6_col6, #T_078cf_row6_col7, #T_078cf_row6_col8, #T_078cf_row6_col9, #T_078cf_row6_col10, #T_078cf_row6_col11, #T_078cf_row6_col13, #T_078cf_row6_col14, #T_078cf_row6_col16, #T_078cf_row6_col17, #T_078cf_row6_col19, #T_078cf_row7_col0, #T_078cf_row7_col2, #T_078cf_row7_col4, #T_078cf_row7_col5, #T_078cf_row7_col6, #T_078cf_row7_col7, #T_078cf_row7_col8, #T_078cf_row7_col9, #T_078cf_row7_col10, #T_078cf_row7_col11, #T_078cf_row7_col14, #T_078cf_row7_col16, #T_078cf_row7_col17, #T_078cf_row7_col19, #T_078cf_row8_col0, #T_078cf_row8_col2, #T_078cf_row8_col4, #T_078cf_row8_col5, #T_078cf_row8_col6, #T_078cf_row8_col7, #T_078cf_row8_col8, #T_078cf_row8_col9, #T_078cf_row8_col10, #T_078cf_row8_col11, #T_078cf_row8_col14, #T_078cf_row8_col16, #T_078cf_row8_col17, #T_078cf_row8_col19, #T_078cf_row9_col0, #T_078cf_row9_col2, #T_078cf_row9_col4, #T_078cf_row9_col5, #T_078cf_row9_col6, #T_078cf_row9_col7, #T_078cf_row9_col8, #T_078cf_row9_col9, #T_078cf_row9_col10, #T_078cf_row9_col11, #T_078cf_row9_col14, #T_078cf_row9_col16, #T_078cf_row9_col17, #T_078cf_row10_col8, #T_078cf_row10_col10, #T_078cf_row10_col14 {
   background-color: #f7fbff;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row1_col0, #T_80464_row1_col2, #T_80464_row1_col3, #T_80464_row1_col4, #T_80464_row1_col5, #T_80464_row1_col6, #T_80464_row1_col7, #T_80464_row1_col8, #T_80464_row1_col9, #T_80464_row1_col10, #T_80464_row1_col11, #T_80464_row1_col13, #T_80464_row1_col14, #T_80464_row1_col16, #T_80464_row1_col17, #T_80464_row1_col19, #T_80464_row2_col0, #T_80464_row2_col2, #T_80464_row2_col3, #T_80464_row2_col4, #T_80464_row2_col5, #T_80464_row2_col6, #T_80464_row2_col7, #T_80464_row2_col8, #T_80464_row2_col9, #T_80464_row2_col10, #T_80464_row2_col11, #T_80464_row2_col13, #T_80464_row2_col14, #T_80464_row2_col16, #T_80464_row2_col17, #T_80464_row2_col19, #T_80464_row3_col0, #T_80464_row3_col2, #T_80464_row3_col3, #T_80464_row3_col4, #T_80464_row3_col5, #T_80464_row3_col6, #T_80464_row3_col7, #T_80464_row3_col8, #T_80464_row3_col9, #T_80464_row3_col10, #T_80464_row3_col11, #T_80464_row3_col13, #T_80464_row3_col14, #T_80464_row3_col16, #T_80464_row3_col17, #T_80464_row3_col19 {
+#T_078cf_row1_col0, #T_078cf_row1_col2, #T_078cf_row1_col3, #T_078cf_row1_col4, #T_078cf_row1_col5, #T_078cf_row1_col6, #T_078cf_row1_col7, #T_078cf_row1_col8, #T_078cf_row1_col9, #T_078cf_row1_col10, #T_078cf_row1_col11, #T_078cf_row1_col13, #T_078cf_row1_col14, #T_078cf_row1_col16, #T_078cf_row1_col17, #T_078cf_row1_col19, #T_078cf_row2_col0, #T_078cf_row2_col2, #T_078cf_row2_col3, #T_078cf_row2_col4, #T_078cf_row2_col5, #T_078cf_row2_col6, #T_078cf_row2_col7, #T_078cf_row2_col8, #T_078cf_row2_col9, #T_078cf_row2_col10, #T_078cf_row2_col11, #T_078cf_row2_col13, #T_078cf_row2_col14, #T_078cf_row2_col16, #T_078cf_row2_col17, #T_078cf_row2_col19, #T_078cf_row3_col0, #T_078cf_row3_col2, #T_078cf_row3_col3, #T_078cf_row3_col4, #T_078cf_row3_col5, #T_078cf_row3_col6, #T_078cf_row3_col7, #T_078cf_row3_col8, #T_078cf_row3_col9, #T_078cf_row3_col10, #T_078cf_row3_col11, #T_078cf_row3_col13, #T_078cf_row3_col14, #T_078cf_row3_col16, #T_078cf_row3_col17, #T_078cf_row3_col19 {
   background-color: #000000;
   color: #f1f1f1;
   font-family: Segoe UI;
 }
-#T_80464_row4_col2, #T_80464_row4_col17, #T_80464_row4_col19, #T_80464_row5_col0, #T_80464_row5_col6, #T_80464_row7_col13, #T_80464_row9_col19 {
+#T_078cf_row4_col2, #T_078cf_row4_col17, #T_078cf_row4_col19, #T_078cf_row5_col0, #T_078cf_row5_col6, #T_078cf_row7_col13, #T_078cf_row9_col19 {
   background-color: #f6faff;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row4_col3 {
+#T_078cf_row4_col3 {
   background-color: #f0f6fd;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row4_col13, #T_80464_row4_col16, #T_80464_row5_col13, #T_80464_row7_col3, #T_80464_row8_col13, #T_80464_row10_col5, #T_80464_row10_col7 {
+#T_078cf_row4_col13, #T_078cf_row4_col16, #T_078cf_row5_col13, #T_078cf_row7_col3, #T_078cf_row8_col13, #T_078cf_row10_col5, #T_078cf_row10_col7 {
   background-color: #f5f9fe;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row5_col2 {
+#T_078cf_row5_col2 {
   background-color: #ecf4fb;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row5_col3, #T_80464_row10_col11 {
+#T_078cf_row5_col3, #T_078cf_row10_col11 {
   background-color: #f2f8fd;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row5_col16 {
+#T_078cf_row5_col16 {
   background-color: #e7f0fa;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row5_col17, #T_80464_row9_col13 {
+#T_078cf_row5_col17, #T_078cf_row9_col13 {
   background-color: #f3f8fe;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row8_col3 {
+#T_078cf_row8_col3 {
   background-color: #f2f7fd;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row9_col3, #T_80464_row10_col13 {
+#T_078cf_row9_col3, #T_078cf_row10_col13 {
   background-color: #edf4fc;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row10_col0 {
+#T_078cf_row10_col0 {
   background-color: #e6f0f9;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row10_col3 {
+#T_078cf_row10_col3 {
   background-color: #d9e7f5;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row10_col4, #T_80464_row10_col19 {
+#T_078cf_row10_col4, #T_078cf_row10_col19 {
   background-color: #f4f9fe;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row10_col6 {
+#T_078cf_row10_col6 {
   background-color: #ebf3fb;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row10_col9 {
+#T_078cf_row10_col9 {
   background-color: #eef5fc;
   color: #000000;
   font-family: Segoe UI;
 }
-#T_80464_row10_col16 {
+#T_078cf_row10_col16 {
   background-color: #0e59a2;
   color: #f1f1f1;
   font-family: Segoe UI;
 }
-#T_80464_row10_col17 {
+#T_078cf_row10_col17 {
   background-color: #e3eef8;
   color: #000000;
   font-family: Segoe UI;
 }
 </style>
-<table id="T_80464">
+<table id="T_078cf">
   <thead>
     <tr>
       <th class="blank level0">&nbsp;</th>
-      <th id="T_80464_level0_col0" class="col_heading level0 col0">Age</th>
-      <th id="T_80464_level0_col1" class="col_heading level0 col1">Occupation</th>
-      <th id="T_80464_level0_col2" class="col_heading level0 col2">Annual_Income</th>
-      <th id="T_80464_level0_col3" class="col_heading level0 col3">Monthly_Inhand_Salary</th>
-      <th id="T_80464_level0_col4" class="col_heading level0 col4">Num_Bank_Accounts</th>
-      <th id="T_80464_level0_col5" class="col_heading level0 col5">Num_Credit_Card</th>
-      <th id="T_80464_level0_col6" class="col_heading level0 col6">Interest_Rate</th>
-      <th id="T_80464_level0_col7" class="col_heading level0 col7">Num_of_Loan</th>
-      <th id="T_80464_level0_col8" class="col_heading level0 col8">Delay_from_due_date</th>
-      <th id="T_80464_level0_col9" class="col_heading level0 col9">Num_of_Delayed_Payment</th>
-      <th id="T_80464_level0_col10" class="col_heading level0 col10">Changed_Credit_Limit</th>
-      <th id="T_80464_level0_col11" class="col_heading level0 col11">Num_Credit_Inquiries</th>
-      <th id="T_80464_level0_col12" class="col_heading level0 col12">Credit_Mix</th>
-      <th id="T_80464_level0_col13" class="col_heading level0 col13">Outstanding_Debt</th>
-      <th id="T_80464_level0_col14" class="col_heading level0 col14">Credit_Utilization_Ratio</th>
-      <th id="T_80464_level0_col15" class="col_heading level0 col15">Payment_of_Min_Amount</th>
-      <th id="T_80464_level0_col16" class="col_heading level0 col16">Total_EMI_per_month</th>
-      <th id="T_80464_level0_col17" class="col_heading level0 col17">Amount_invested_monthly</th>
-      <th id="T_80464_level0_col18" class="col_heading level0 col18">Payment_Behaviour</th>
-      <th id="T_80464_level0_col19" class="col_heading level0 col19">Monthly_Balance</th>
-      <th id="T_80464_level0_col20" class="col_heading level0 col20">Credit_Score</th>
+      <th id="T_078cf_level0_col0" class="col_heading level0 col0">Age</th>
+      <th id="T_078cf_level0_col1" class="col_heading level0 col1">Occupation</th>
+      <th id="T_078cf_level0_col2" class="col_heading level0 col2">Annual_Income</th>
+      <th id="T_078cf_level0_col3" class="col_heading level0 col3">Monthly_Inhand_Salary</th>
+      <th id="T_078cf_level0_col4" class="col_heading level0 col4">Num_Bank_Accounts</th>
+      <th id="T_078cf_level0_col5" class="col_heading level0 col5">Num_Credit_Card</th>
+      <th id="T_078cf_level0_col6" class="col_heading level0 col6">Interest_Rate</th>
+      <th id="T_078cf_level0_col7" class="col_heading level0 col7">Num_of_Loan</th>
+      <th id="T_078cf_level0_col8" class="col_heading level0 col8">Delay_from_due_date</th>
+      <th id="T_078cf_level0_col9" class="col_heading level0 col9">Num_of_Delayed_Payment</th>
+      <th id="T_078cf_level0_col10" class="col_heading level0 col10">Changed_Credit_Limit</th>
+      <th id="T_078cf_level0_col11" class="col_heading level0 col11">Num_Credit_Inquiries</th>
+      <th id="T_078cf_level0_col12" class="col_heading level0 col12">Credit_Mix</th>
+      <th id="T_078cf_level0_col13" class="col_heading level0 col13">Outstanding_Debt</th>
+      <th id="T_078cf_level0_col14" class="col_heading level0 col14">Credit_Utilization_Ratio</th>
+      <th id="T_078cf_level0_col15" class="col_heading level0 col15">Payment_of_Min_Amount</th>
+      <th id="T_078cf_level0_col16" class="col_heading level0 col16">Total_EMI_per_month</th>
+      <th id="T_078cf_level0_col17" class="col_heading level0 col17">Amount_invested_monthly</th>
+      <th id="T_078cf_level0_col18" class="col_heading level0 col18">Payment_Behaviour</th>
+      <th id="T_078cf_level0_col19" class="col_heading level0 col19">Monthly_Balance</th>
+      <th id="T_078cf_level0_col20" class="col_heading level0 col20">Credit_Score</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_80464_level0_row0" class="row_heading level0 row0">count</th>
-      <td id="T_80464_row0_col0" class="data row0 col0">97799.000000</td>
-      <td id="T_80464_row0_col1" class="data row0 col1">97799</td>
-      <td id="T_80464_row0_col2" class="data row0 col2">97799.000000</td>
-      <td id="T_80464_row0_col3" class="data row0 col3">97799.000000</td>
-      <td id="T_80464_row0_col4" class="data row0 col4">97799.000000</td>
-      <td id="T_80464_row0_col5" class="data row0 col5">97799.000000</td>
-      <td id="T_80464_row0_col6" class="data row0 col6">97799.000000</td>
-      <td id="T_80464_row0_col7" class="data row0 col7">97799.000000</td>
-      <td id="T_80464_row0_col8" class="data row0 col8">97799.000000</td>
-      <td id="T_80464_row0_col9" class="data row0 col9">97799.000000</td>
-      <td id="T_80464_row0_col10" class="data row0 col10">97799.000000</td>
-      <td id="T_80464_row0_col11" class="data row0 col11">97799.000000</td>
-      <td id="T_80464_row0_col12" class="data row0 col12">97799</td>
-      <td id="T_80464_row0_col13" class="data row0 col13">97799.000000</td>
-      <td id="T_80464_row0_col14" class="data row0 col14">97799.000000</td>
-      <td id="T_80464_row0_col15" class="data row0 col15">97799</td>
-      <td id="T_80464_row0_col16" class="data row0 col16">97799.000000</td>
-      <td id="T_80464_row0_col17" class="data row0 col17">97799.000000</td>
-      <td id="T_80464_row0_col18" class="data row0 col18">97799</td>
-      <td id="T_80464_row0_col19" class="data row0 col19">97799.000000</td>
-      <td id="T_80464_row0_col20" class="data row0 col20">97799</td>
+      <th id="T_078cf_level0_row0" class="row_heading level0 row0">count</th>
+      <td id="T_078cf_row0_col0" class="data row0 col0">97799.000000</td>
+      <td id="T_078cf_row0_col1" class="data row0 col1">97799</td>
+      <td id="T_078cf_row0_col2" class="data row0 col2">97799.000000</td>
+      <td id="T_078cf_row0_col3" class="data row0 col3">97799.000000</td>
+      <td id="T_078cf_row0_col4" class="data row0 col4">97799.000000</td>
+      <td id="T_078cf_row0_col5" class="data row0 col5">97799.000000</td>
+      <td id="T_078cf_row0_col6" class="data row0 col6">97799.000000</td>
+      <td id="T_078cf_row0_col7" class="data row0 col7">97799.000000</td>
+      <td id="T_078cf_row0_col8" class="data row0 col8">97799.000000</td>
+      <td id="T_078cf_row0_col9" class="data row0 col9">97799.000000</td>
+      <td id="T_078cf_row0_col10" class="data row0 col10">97799.000000</td>
+      <td id="T_078cf_row0_col11" class="data row0 col11">97799.000000</td>
+      <td id="T_078cf_row0_col12" class="data row0 col12">97799</td>
+      <td id="T_078cf_row0_col13" class="data row0 col13">97799.000000</td>
+      <td id="T_078cf_row0_col14" class="data row0 col14">97799.000000</td>
+      <td id="T_078cf_row0_col15" class="data row0 col15">97799</td>
+      <td id="T_078cf_row0_col16" class="data row0 col16">97799.000000</td>
+      <td id="T_078cf_row0_col17" class="data row0 col17">97799.000000</td>
+      <td id="T_078cf_row0_col18" class="data row0 col18">97799</td>
+      <td id="T_078cf_row0_col19" class="data row0 col19">97799.000000</td>
+      <td id="T_078cf_row0_col20" class="data row0 col20">97799</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row1" class="row_heading level0 row1">unique</th>
-      <td id="T_80464_row1_col0" class="data row1 col0">nan</td>
-      <td id="T_80464_row1_col1" class="data row1 col1">15</td>
-      <td id="T_80464_row1_col2" class="data row1 col2">nan</td>
-      <td id="T_80464_row1_col3" class="data row1 col3">nan</td>
-      <td id="T_80464_row1_col4" class="data row1 col4">nan</td>
-      <td id="T_80464_row1_col5" class="data row1 col5">nan</td>
-      <td id="T_80464_row1_col6" class="data row1 col6">nan</td>
-      <td id="T_80464_row1_col7" class="data row1 col7">nan</td>
-      <td id="T_80464_row1_col8" class="data row1 col8">nan</td>
-      <td id="T_80464_row1_col9" class="data row1 col9">nan</td>
-      <td id="T_80464_row1_col10" class="data row1 col10">nan</td>
-      <td id="T_80464_row1_col11" class="data row1 col11">nan</td>
-      <td id="T_80464_row1_col12" class="data row1 col12">3</td>
-      <td id="T_80464_row1_col13" class="data row1 col13">nan</td>
-      <td id="T_80464_row1_col14" class="data row1 col14">nan</td>
-      <td id="T_80464_row1_col15" class="data row1 col15">2</td>
-      <td id="T_80464_row1_col16" class="data row1 col16">nan</td>
-      <td id="T_80464_row1_col17" class="data row1 col17">nan</td>
-      <td id="T_80464_row1_col18" class="data row1 col18">6</td>
-      <td id="T_80464_row1_col19" class="data row1 col19">nan</td>
-      <td id="T_80464_row1_col20" class="data row1 col20">3</td>
+      <th id="T_078cf_level0_row1" class="row_heading level0 row1">unique</th>
+      <td id="T_078cf_row1_col0" class="data row1 col0">nan</td>
+      <td id="T_078cf_row1_col1" class="data row1 col1">15</td>
+      <td id="T_078cf_row1_col2" class="data row1 col2">nan</td>
+      <td id="T_078cf_row1_col3" class="data row1 col3">nan</td>
+      <td id="T_078cf_row1_col4" class="data row1 col4">nan</td>
+      <td id="T_078cf_row1_col5" class="data row1 col5">nan</td>
+      <td id="T_078cf_row1_col6" class="data row1 col6">nan</td>
+      <td id="T_078cf_row1_col7" class="data row1 col7">nan</td>
+      <td id="T_078cf_row1_col8" class="data row1 col8">nan</td>
+      <td id="T_078cf_row1_col9" class="data row1 col9">nan</td>
+      <td id="T_078cf_row1_col10" class="data row1 col10">nan</td>
+      <td id="T_078cf_row1_col11" class="data row1 col11">nan</td>
+      <td id="T_078cf_row1_col12" class="data row1 col12">3</td>
+      <td id="T_078cf_row1_col13" class="data row1 col13">nan</td>
+      <td id="T_078cf_row1_col14" class="data row1 col14">nan</td>
+      <td id="T_078cf_row1_col15" class="data row1 col15">2</td>
+      <td id="T_078cf_row1_col16" class="data row1 col16">nan</td>
+      <td id="T_078cf_row1_col17" class="data row1 col17">nan</td>
+      <td id="T_078cf_row1_col18" class="data row1 col18">6</td>
+      <td id="T_078cf_row1_col19" class="data row1 col19">nan</td>
+      <td id="T_078cf_row1_col20" class="data row1 col20">3</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row2" class="row_heading level0 row2">top</th>
-      <td id="T_80464_row2_col0" class="data row2 col0">nan</td>
-      <td id="T_80464_row2_col1" class="data row2 col1">Scientist</td>
-      <td id="T_80464_row2_col2" class="data row2 col2">nan</td>
-      <td id="T_80464_row2_col3" class="data row2 col3">nan</td>
-      <td id="T_80464_row2_col4" class="data row2 col4">nan</td>
-      <td id="T_80464_row2_col5" class="data row2 col5">nan</td>
-      <td id="T_80464_row2_col6" class="data row2 col6">nan</td>
-      <td id="T_80464_row2_col7" class="data row2 col7">nan</td>
-      <td id="T_80464_row2_col8" class="data row2 col8">nan</td>
-      <td id="T_80464_row2_col9" class="data row2 col9">nan</td>
-      <td id="T_80464_row2_col10" class="data row2 col10">nan</td>
-      <td id="T_80464_row2_col11" class="data row2 col11">nan</td>
-      <td id="T_80464_row2_col12" class="data row2 col12">Standard</td>
-      <td id="T_80464_row2_col13" class="data row2 col13">nan</td>
-      <td id="T_80464_row2_col14" class="data row2 col14">nan</td>
-      <td id="T_80464_row2_col15" class="data row2 col15">Yes</td>
-      <td id="T_80464_row2_col16" class="data row2 col16">nan</td>
-      <td id="T_80464_row2_col17" class="data row2 col17">nan</td>
-      <td id="T_80464_row2_col18" class="data row2 col18">Low_spent_Small_value_payments</td>
-      <td id="T_80464_row2_col19" class="data row2 col19">nan</td>
-      <td id="T_80464_row2_col20" class="data row2 col20">Standard</td>
+      <th id="T_078cf_level0_row2" class="row_heading level0 row2">top</th>
+      <td id="T_078cf_row2_col0" class="data row2 col0">nan</td>
+      <td id="T_078cf_row2_col1" class="data row2 col1">Architect</td>
+      <td id="T_078cf_row2_col2" class="data row2 col2">nan</td>
+      <td id="T_078cf_row2_col3" class="data row2 col3">nan</td>
+      <td id="T_078cf_row2_col4" class="data row2 col4">nan</td>
+      <td id="T_078cf_row2_col5" class="data row2 col5">nan</td>
+      <td id="T_078cf_row2_col6" class="data row2 col6">nan</td>
+      <td id="T_078cf_row2_col7" class="data row2 col7">nan</td>
+      <td id="T_078cf_row2_col8" class="data row2 col8">nan</td>
+      <td id="T_078cf_row2_col9" class="data row2 col9">nan</td>
+      <td id="T_078cf_row2_col10" class="data row2 col10">nan</td>
+      <td id="T_078cf_row2_col11" class="data row2 col11">nan</td>
+      <td id="T_078cf_row2_col12" class="data row2 col12">Good</td>
+      <td id="T_078cf_row2_col13" class="data row2 col13">nan</td>
+      <td id="T_078cf_row2_col14" class="data row2 col14">nan</td>
+      <td id="T_078cf_row2_col15" class="data row2 col15">Yes</td>
+      <td id="T_078cf_row2_col16" class="data row2 col16">nan</td>
+      <td id="T_078cf_row2_col17" class="data row2 col17">nan</td>
+      <td id="T_078cf_row2_col18" class="data row2 col18">Low_spent_Small_value_payments</td>
+      <td id="T_078cf_row2_col19" class="data row2 col19">nan</td>
+      <td id="T_078cf_row2_col20" class="data row2 col20">Standard</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row3" class="row_heading level0 row3">freq</th>
-      <td id="T_80464_row3_col0" class="data row3 col0">nan</td>
-      <td id="T_80464_row3_col1" class="data row3 col1">13064</td>
-      <td id="T_80464_row3_col2" class="data row3 col2">nan</td>
-      <td id="T_80464_row3_col3" class="data row3 col3">nan</td>
-      <td id="T_80464_row3_col4" class="data row3 col4">nan</td>
-      <td id="T_80464_row3_col5" class="data row3 col5">nan</td>
-      <td id="T_80464_row3_col6" class="data row3 col6">nan</td>
-      <td id="T_80464_row3_col7" class="data row3 col7">nan</td>
-      <td id="T_80464_row3_col8" class="data row3 col8">nan</td>
-      <td id="T_80464_row3_col9" class="data row3 col9">nan</td>
-      <td id="T_80464_row3_col10" class="data row3 col10">nan</td>
-      <td id="T_80464_row3_col11" class="data row3 col11">nan</td>
-      <td id="T_80464_row3_col12" class="data row3 col12">55452</td>
-      <td id="T_80464_row3_col13" class="data row3 col13">nan</td>
-      <td id="T_80464_row3_col14" class="data row3 col14">nan</td>
-      <td id="T_80464_row3_col15" class="data row3 col15">62894</td>
-      <td id="T_80464_row3_col16" class="data row3 col16">nan</td>
-      <td id="T_80464_row3_col17" class="data row3 col17">nan</td>
-      <td id="T_80464_row3_col18" class="data row3 col18">32359</td>
-      <td id="T_80464_row3_col19" class="data row3 col19">nan</td>
-      <td id="T_80464_row3_col20" class="data row3 col20">52020</td>
+      <th id="T_078cf_level0_row3" class="row_heading level0 row3">freq</th>
+      <td id="T_078cf_row3_col0" class="data row3 col0">nan</td>
+      <td id="T_078cf_row3_col1" class="data row3 col1">13134</td>
+      <td id="T_078cf_row3_col2" class="data row3 col2">nan</td>
+      <td id="T_078cf_row3_col3" class="data row3 col3">nan</td>
+      <td id="T_078cf_row3_col4" class="data row3 col4">nan</td>
+      <td id="T_078cf_row3_col5" class="data row3 col5">nan</td>
+      <td id="T_078cf_row3_col6" class="data row3 col6">nan</td>
+      <td id="T_078cf_row3_col7" class="data row3 col7">nan</td>
+      <td id="T_078cf_row3_col8" class="data row3 col8">nan</td>
+      <td id="T_078cf_row3_col9" class="data row3 col9">nan</td>
+      <td id="T_078cf_row3_col10" class="data row3 col10">nan</td>
+      <td id="T_078cf_row3_col11" class="data row3 col11">nan</td>
+      <td id="T_078cf_row3_col12" class="data row3 col12">43548</td>
+      <td id="T_078cf_row3_col13" class="data row3 col13">nan</td>
+      <td id="T_078cf_row3_col14" class="data row3 col14">nan</td>
+      <td id="T_078cf_row3_col15" class="data row3 col15">62894</td>
+      <td id="T_078cf_row3_col16" class="data row3 col16">nan</td>
+      <td id="T_078cf_row3_col17" class="data row3 col17">nan</td>
+      <td id="T_078cf_row3_col18" class="data row3 col18">24921</td>
+      <td id="T_078cf_row3_col19" class="data row3 col19">nan</td>
+      <td id="T_078cf_row3_col20" class="data row3 col20">52020</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row4" class="row_heading level0 row4">mean</th>
-      <td id="T_80464_row4_col0" class="data row4 col0">119.985153</td>
-      <td id="T_80464_row4_col1" class="data row4 col1">nan</td>
-      <td id="T_80464_row4_col2" class="data row4 col2">175441.663404</td>
-      <td id="T_80464_row4_col3" class="data row4 col3">4027.005640</td>
-      <td id="T_80464_row4_col4" class="data row4 col4">17.087404</td>
-      <td id="T_80464_row4_col5" class="data row4 col5">22.518891</td>
-      <td id="T_80464_row4_col6" class="data row4 col6">72.289103</td>
-      <td id="T_80464_row4_col7" class="data row4 col7">10.747370</td>
-      <td id="T_80464_row4_col8" class="data row4 col8">21.073150</td>
-      <td id="T_80464_row4_col9" class="data row4 col9">29.809957</td>
-      <td id="T_80464_row4_col10" class="data row4 col10">10.464173</td>
-      <td id="T_80464_row4_col11" class="data row4 col11">27.318183</td>
-      <td id="T_80464_row4_col12" class="data row4 col12">nan</td>
-      <td id="T_80464_row4_col13" class="data row4 col13">1426.299152</td>
-      <td id="T_80464_row4_col14" class="data row4 col14">32.282054</td>
-      <td id="T_80464_row4_col15" class="data row4 col15">nan</td>
-      <td id="T_80464_row4_col16" class="data row4 col16">1406.498229</td>
-      <td id="T_80464_row4_col17" class="data row4 col17">615.602370</td>
-      <td id="T_80464_row4_col18" class="data row4 col18">nan</td>
-      <td id="T_80464_row4_col19" class="data row4 col19">401.639906</td>
-      <td id="T_80464_row4_col20" class="data row4 col20">nan</td>
+      <th id="T_078cf_level0_row4" class="row_heading level0 row4">mean</th>
+      <td id="T_078cf_row4_col0" class="data row4 col0">119.985153</td>
+      <td id="T_078cf_row4_col1" class="data row4 col1">nan</td>
+      <td id="T_078cf_row4_col2" class="data row4 col2">175441.663404</td>
+      <td id="T_078cf_row4_col3" class="data row4 col3">4027.005640</td>
+      <td id="T_078cf_row4_col4" class="data row4 col4">17.087404</td>
+      <td id="T_078cf_row4_col5" class="data row4 col5">22.518891</td>
+      <td id="T_078cf_row4_col6" class="data row4 col6">72.289103</td>
+      <td id="T_078cf_row4_col7" class="data row4 col7">10.747370</td>
+      <td id="T_078cf_row4_col8" class="data row4 col8">21.073150</td>
+      <td id="T_078cf_row4_col9" class="data row4 col9">29.809957</td>
+      <td id="T_078cf_row4_col10" class="data row4 col10">10.464173</td>
+      <td id="T_078cf_row4_col11" class="data row4 col11">27.318183</td>
+      <td id="T_078cf_row4_col12" class="data row4 col12">nan</td>
+      <td id="T_078cf_row4_col13" class="data row4 col13">1426.299152</td>
+      <td id="T_078cf_row4_col14" class="data row4 col14">32.282054</td>
+      <td id="T_078cf_row4_col15" class="data row4 col15">nan</td>
+      <td id="T_078cf_row4_col16" class="data row4 col16">1406.498229</td>
+      <td id="T_078cf_row4_col17" class="data row4 col17">615.602370</td>
+      <td id="T_078cf_row4_col18" class="data row4 col18">nan</td>
+      <td id="T_078cf_row4_col19" class="data row4 col19">401.639906</td>
+      <td id="T_078cf_row4_col20" class="data row4 col20">nan</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row5" class="row_heading level0 row5">std</th>
-      <td id="T_80464_row5_col0" class="data row5 col0">687.568412</td>
-      <td id="T_80464_row5_col1" class="data row5 col1">nan</td>
-      <td id="T_80464_row5_col2" class="data row5 col2">1422851.517850</td>
-      <td id="T_80464_row5_col3" class="data row5 col3">2961.624830</td>
-      <td id="T_80464_row5_col4" class="data row5 col4">117.233274</td>
-      <td id="T_80464_row5_col5" class="data row5 col5">129.222276</td>
-      <td id="T_80464_row5_col6" class="data row5 col6">466.472121</td>
-      <td id="T_80464_row5_col7" class="data row5 col7">61.596415</td>
-      <td id="T_80464_row5_col8" class="data row5 col8">14.866001</td>
-      <td id="T_80464_row5_col9" class="data row5 col9">218.435605</td>
-      <td id="T_80464_row5_col10" class="data row5 col10">6.668569</td>
-      <td id="T_80464_row5_col11" class="data row5 col11">191.044206</td>
-      <td id="T_80464_row5_col12" class="data row5 col12">nan</td>
-      <td id="T_80464_row5_col13" class="data row5 col13">1155.320700</td>
-      <td id="T_80464_row5_col14" class="data row5 col14">5.114341</td>
-      <td id="T_80464_row5_col15" class="data row5 col15">nan</td>
-      <td id="T_80464_row5_col16" class="data row5 col16">8312.094625</td>
-      <td id="T_80464_row5_col17" class="data row5 col17">2001.490408</td>
-      <td id="T_80464_row5_col18" class="data row5 col18">nan</td>
-      <td id="T_80464_row5_col19" class="data row5 col19">212.574825</td>
-      <td id="T_80464_row5_col20" class="data row5 col20">nan</td>
+      <th id="T_078cf_level0_row5" class="row_heading level0 row5">std</th>
+      <td id="T_078cf_row5_col0" class="data row5 col0">687.568412</td>
+      <td id="T_078cf_row5_col1" class="data row5 col1">nan</td>
+      <td id="T_078cf_row5_col2" class="data row5 col2">1422851.517850</td>
+      <td id="T_078cf_row5_col3" class="data row5 col3">2961.624830</td>
+      <td id="T_078cf_row5_col4" class="data row5 col4">117.233274</td>
+      <td id="T_078cf_row5_col5" class="data row5 col5">129.222276</td>
+      <td id="T_078cf_row5_col6" class="data row5 col6">466.472121</td>
+      <td id="T_078cf_row5_col7" class="data row5 col7">61.596415</td>
+      <td id="T_078cf_row5_col8" class="data row5 col8">14.866001</td>
+      <td id="T_078cf_row5_col9" class="data row5 col9">218.435605</td>
+      <td id="T_078cf_row5_col10" class="data row5 col10">6.668569</td>
+      <td id="T_078cf_row5_col11" class="data row5 col11">191.044206</td>
+      <td id="T_078cf_row5_col12" class="data row5 col12">nan</td>
+      <td id="T_078cf_row5_col13" class="data row5 col13">1155.320700</td>
+      <td id="T_078cf_row5_col14" class="data row5 col14">5.114341</td>
+      <td id="T_078cf_row5_col15" class="data row5 col15">nan</td>
+      <td id="T_078cf_row5_col16" class="data row5 col16">8312.094625</td>
+      <td id="T_078cf_row5_col17" class="data row5 col17">2001.490408</td>
+      <td id="T_078cf_row5_col18" class="data row5 col18">nan</td>
+      <td id="T_078cf_row5_col19" class="data row5 col19">212.574825</td>
+      <td id="T_078cf_row5_col20" class="data row5 col20">nan</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row6" class="row_heading level0 row6">min</th>
-      <td id="T_80464_row6_col0" class="data row6 col0">14.000000</td>
-      <td id="T_80464_row6_col1" class="data row6 col1">nan</td>
-      <td id="T_80464_row6_col2" class="data row6 col2">7005.930000</td>
-      <td id="T_80464_row6_col3" class="data row6 col3">303.645417</td>
-      <td id="T_80464_row6_col4" class="data row6 col4">-1.000000</td>
-      <td id="T_80464_row6_col5" class="data row6 col5">0.000000</td>
-      <td id="T_80464_row6_col6" class="data row6 col6">1.000000</td>
-      <td id="T_80464_row6_col7" class="data row6 col7">0.000000</td>
-      <td id="T_80464_row6_col8" class="data row6 col8">-5.000000</td>
-      <td id="T_80464_row6_col9" class="data row6 col9">-3.000000</td>
-      <td id="T_80464_row6_col10" class="data row6 col10">0.000000</td>
-      <td id="T_80464_row6_col11" class="data row6 col11">0.000000</td>
-      <td id="T_80464_row6_col12" class="data row6 col12">nan</td>
-      <td id="T_80464_row6_col13" class="data row6 col13">0.230000</td>
-      <td id="T_80464_row6_col14" class="data row6 col14">20.000000</td>
-      <td id="T_80464_row6_col15" class="data row6 col15">nan</td>
-      <td id="T_80464_row6_col16" class="data row6 col16">0.000000</td>
-      <td id="T_80464_row6_col17" class="data row6 col17">0.000000</td>
-      <td id="T_80464_row6_col18" class="data row6 col18">nan</td>
-      <td id="T_80464_row6_col19" class="data row6 col19">0.007760</td>
-      <td id="T_80464_row6_col20" class="data row6 col20">nan</td>
+      <th id="T_078cf_level0_row6" class="row_heading level0 row6">min</th>
+      <td id="T_078cf_row6_col0" class="data row6 col0">14.000000</td>
+      <td id="T_078cf_row6_col1" class="data row6 col1">nan</td>
+      <td id="T_078cf_row6_col2" class="data row6 col2">7005.930000</td>
+      <td id="T_078cf_row6_col3" class="data row6 col3">303.645417</td>
+      <td id="T_078cf_row6_col4" class="data row6 col4">-1.000000</td>
+      <td id="T_078cf_row6_col5" class="data row6 col5">0.000000</td>
+      <td id="T_078cf_row6_col6" class="data row6 col6">1.000000</td>
+      <td id="T_078cf_row6_col7" class="data row6 col7">0.000000</td>
+      <td id="T_078cf_row6_col8" class="data row6 col8">-5.000000</td>
+      <td id="T_078cf_row6_col9" class="data row6 col9">-3.000000</td>
+      <td id="T_078cf_row6_col10" class="data row6 col10">0.000000</td>
+      <td id="T_078cf_row6_col11" class="data row6 col11">0.000000</td>
+      <td id="T_078cf_row6_col12" class="data row6 col12">nan</td>
+      <td id="T_078cf_row6_col13" class="data row6 col13">0.230000</td>
+      <td id="T_078cf_row6_col14" class="data row6 col14">20.000000</td>
+      <td id="T_078cf_row6_col15" class="data row6 col15">nan</td>
+      <td id="T_078cf_row6_col16" class="data row6 col16">0.000000</td>
+      <td id="T_078cf_row6_col17" class="data row6 col17">0.000000</td>
+      <td id="T_078cf_row6_col18" class="data row6 col18">nan</td>
+      <td id="T_078cf_row6_col19" class="data row6 col19">0.007760</td>
+      <td id="T_078cf_row6_col20" class="data row6 col20">nan</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row7" class="row_heading level0 row7">25%</th>
-      <td id="T_80464_row7_col0" class="data row7 col0">25.000000</td>
-      <td id="T_80464_row7_col1" class="data row7 col1">nan</td>
-      <td id="T_80464_row7_col2" class="data row7 col2">19436.305000</td>
-      <td id="T_80464_row7_col3" class="data row7 col3">1789.873333</td>
-      <td id="T_80464_row7_col4" class="data row7 col4">3.000000</td>
-      <td id="T_80464_row7_col5" class="data row7 col5">4.000000</td>
-      <td id="T_80464_row7_col6" class="data row7 col6">8.000000</td>
-      <td id="T_80464_row7_col7" class="data row7 col7">2.000000</td>
-      <td id="T_80464_row7_col8" class="data row7 col8">10.000000</td>
-      <td id="T_80464_row7_col9" class="data row7 col9">9.000000</td>
-      <td id="T_80464_row7_col10" class="data row7 col10">5.350000</td>
-      <td id="T_80464_row7_col11" class="data row7 col11">3.000000</td>
-      <td id="T_80464_row7_col12" class="data row7 col12">nan</td>
-      <td id="T_80464_row7_col13" class="data row7 col13">566.080000</td>
-      <td id="T_80464_row7_col14" class="data row7 col14">28.049940</td>
-      <td id="T_80464_row7_col15" class="data row7 col15">nan</td>
-      <td id="T_80464_row7_col16" class="data row7 col16">30.319985</td>
-      <td id="T_80464_row7_col17" class="data row7 col17">76.913387</td>
-      <td id="T_80464_row7_col18" class="data row7 col18">nan</td>
-      <td id="T_80464_row7_col19" class="data row7 col19">270.916082</td>
-      <td id="T_80464_row7_col20" class="data row7 col20">nan</td>
+      <th id="T_078cf_level0_row7" class="row_heading level0 row7">25%</th>
+      <td id="T_078cf_row7_col0" class="data row7 col0">25.000000</td>
+      <td id="T_078cf_row7_col1" class="data row7 col1">nan</td>
+      <td id="T_078cf_row7_col2" class="data row7 col2">19436.305000</td>
+      <td id="T_078cf_row7_col3" class="data row7 col3">1789.873333</td>
+      <td id="T_078cf_row7_col4" class="data row7 col4">3.000000</td>
+      <td id="T_078cf_row7_col5" class="data row7 col5">4.000000</td>
+      <td id="T_078cf_row7_col6" class="data row7 col6">8.000000</td>
+      <td id="T_078cf_row7_col7" class="data row7 col7">2.000000</td>
+      <td id="T_078cf_row7_col8" class="data row7 col8">10.000000</td>
+      <td id="T_078cf_row7_col9" class="data row7 col9">9.000000</td>
+      <td id="T_078cf_row7_col10" class="data row7 col10">5.350000</td>
+      <td id="T_078cf_row7_col11" class="data row7 col11">3.000000</td>
+      <td id="T_078cf_row7_col12" class="data row7 col12">nan</td>
+      <td id="T_078cf_row7_col13" class="data row7 col13">566.080000</td>
+      <td id="T_078cf_row7_col14" class="data row7 col14">28.049940</td>
+      <td id="T_078cf_row7_col15" class="data row7 col15">nan</td>
+      <td id="T_078cf_row7_col16" class="data row7 col16">30.319985</td>
+      <td id="T_078cf_row7_col17" class="data row7 col17">76.913387</td>
+      <td id="T_078cf_row7_col18" class="data row7 col18">nan</td>
+      <td id="T_078cf_row7_col19" class="data row7 col19">270.916082</td>
+      <td id="T_078cf_row7_col20" class="data row7 col20">nan</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row8" class="row_heading level0 row8">50%</th>
-      <td id="T_80464_row8_col0" class="data row8 col0">34.000000</td>
-      <td id="T_80464_row8_col1" class="data row8 col1">nan</td>
-      <td id="T_80464_row8_col2" class="data row8 col2">37551.780000</td>
-      <td id="T_80464_row8_col3" class="data row8 col3">3091.000000</td>
-      <td id="T_80464_row8_col4" class="data row8 col4">6.000000</td>
-      <td id="T_80464_row8_col5" class="data row8 col5">5.000000</td>
-      <td id="T_80464_row8_col6" class="data row8 col6">13.000000</td>
-      <td id="T_80464_row8_col7" class="data row8 col7">3.000000</td>
-      <td id="T_80464_row8_col8" class="data row8 col8">18.000000</td>
-      <td id="T_80464_row8_col9" class="data row8 col9">14.000000</td>
-      <td id="T_80464_row8_col10" class="data row8 col10">9.400000</td>
-      <td id="T_80464_row8_col11" class="data row8 col11">6.000000</td>
-      <td id="T_80464_row8_col12" class="data row8 col12">nan</td>
-      <td id="T_80464_row8_col13" class="data row8 col13">1166.230000</td>
-      <td id="T_80464_row8_col14" class="data row8 col14">32.301174</td>
-      <td id="T_80464_row8_col15" class="data row8 col15">nan</td>
-      <td id="T_80464_row8_col16" class="data row8 col16">69.246684</td>
-      <td id="T_80464_row8_col17" class="data row8 col17">135.770733</td>
-      <td id="T_80464_row8_col18" class="data row8 col18">nan</td>
-      <td id="T_80464_row8_col19" class="data row8 col19">336.652588</td>
-      <td id="T_80464_row8_col20" class="data row8 col20">nan</td>
+      <th id="T_078cf_level0_row8" class="row_heading level0 row8">50%</th>
+      <td id="T_078cf_row8_col0" class="data row8 col0">34.000000</td>
+      <td id="T_078cf_row8_col1" class="data row8 col1">nan</td>
+      <td id="T_078cf_row8_col2" class="data row8 col2">37551.780000</td>
+      <td id="T_078cf_row8_col3" class="data row8 col3">3091.000000</td>
+      <td id="T_078cf_row8_col4" class="data row8 col4">6.000000</td>
+      <td id="T_078cf_row8_col5" class="data row8 col5">5.000000</td>
+      <td id="T_078cf_row8_col6" class="data row8 col6">13.000000</td>
+      <td id="T_078cf_row8_col7" class="data row8 col7">3.000000</td>
+      <td id="T_078cf_row8_col8" class="data row8 col8">18.000000</td>
+      <td id="T_078cf_row8_col9" class="data row8 col9">14.000000</td>
+      <td id="T_078cf_row8_col10" class="data row8 col10">9.400000</td>
+      <td id="T_078cf_row8_col11" class="data row8 col11">6.000000</td>
+      <td id="T_078cf_row8_col12" class="data row8 col12">nan</td>
+      <td id="T_078cf_row8_col13" class="data row8 col13">1166.230000</td>
+      <td id="T_078cf_row8_col14" class="data row8 col14">32.301174</td>
+      <td id="T_078cf_row8_col15" class="data row8 col15">nan</td>
+      <td id="T_078cf_row8_col16" class="data row8 col16">69.246684</td>
+      <td id="T_078cf_row8_col17" class="data row8 col17">135.770733</td>
+      <td id="T_078cf_row8_col18" class="data row8 col18">nan</td>
+      <td id="T_078cf_row8_col19" class="data row8 col19">336.652588</td>
+      <td id="T_078cf_row8_col20" class="data row8 col20">nan</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row9" class="row_heading level0 row9">75%</th>
-      <td id="T_80464_row9_col0" class="data row9 col0">42.000000</td>
-      <td id="T_80464_row9_col1" class="data row9 col1">nan</td>
-      <td id="T_80464_row9_col2" class="data row9 col2">72740.960000</td>
-      <td id="T_80464_row9_col3" class="data row9 col3">5371.220000</td>
-      <td id="T_80464_row9_col4" class="data row9 col4">7.000000</td>
-      <td id="T_80464_row9_col5" class="data row9 col5">7.000000</td>
-      <td id="T_80464_row9_col6" class="data row9 col6">20.000000</td>
-      <td id="T_80464_row9_col7" class="data row9 col7">6.000000</td>
-      <td id="T_80464_row9_col8" class="data row9 col8">28.000000</td>
-      <td id="T_80464_row9_col9" class="data row9 col9">18.000000</td>
-      <td id="T_80464_row9_col10" class="data row9 col10">14.860000</td>
-      <td id="T_80464_row9_col11" class="data row9 col11">9.000000</td>
-      <td id="T_80464_row9_col12" class="data row9 col12">nan</td>
-      <td id="T_80464_row9_col13" class="data row9 col13">1945.675000</td>
-      <td id="T_80464_row9_col14" class="data row9 col14">36.491492</td>
-      <td id="T_80464_row9_col15" class="data row9 col15">nan</td>
-      <td id="T_80464_row9_col16" class="data row9 col16">161.373123</td>
-      <td id="T_80464_row9_col17" class="data row9 col17">254.946349</td>
-      <td id="T_80464_row9_col18" class="data row9 col18">nan</td>
-      <td id="T_80464_row9_col19" class="data row9 col19">467.500431</td>
-      <td id="T_80464_row9_col20" class="data row9 col20">nan</td>
+      <th id="T_078cf_level0_row9" class="row_heading level0 row9">75%</th>
+      <td id="T_078cf_row9_col0" class="data row9 col0">42.000000</td>
+      <td id="T_078cf_row9_col1" class="data row9 col1">nan</td>
+      <td id="T_078cf_row9_col2" class="data row9 col2">72740.960000</td>
+      <td id="T_078cf_row9_col3" class="data row9 col3">5371.220000</td>
+      <td id="T_078cf_row9_col4" class="data row9 col4">7.000000</td>
+      <td id="T_078cf_row9_col5" class="data row9 col5">7.000000</td>
+      <td id="T_078cf_row9_col6" class="data row9 col6">20.000000</td>
+      <td id="T_078cf_row9_col7" class="data row9 col7">6.000000</td>
+      <td id="T_078cf_row9_col8" class="data row9 col8">28.000000</td>
+      <td id="T_078cf_row9_col9" class="data row9 col9">18.000000</td>
+      <td id="T_078cf_row9_col10" class="data row9 col10">14.860000</td>
+      <td id="T_078cf_row9_col11" class="data row9 col11">9.000000</td>
+      <td id="T_078cf_row9_col12" class="data row9 col12">nan</td>
+      <td id="T_078cf_row9_col13" class="data row9 col13">1945.675000</td>
+      <td id="T_078cf_row9_col14" class="data row9 col14">36.491492</td>
+      <td id="T_078cf_row9_col15" class="data row9 col15">nan</td>
+      <td id="T_078cf_row9_col16" class="data row9 col16">161.373123</td>
+      <td id="T_078cf_row9_col17" class="data row9 col17">254.946349</td>
+      <td id="T_078cf_row9_col18" class="data row9 col18">nan</td>
+      <td id="T_078cf_row9_col19" class="data row9 col19">467.500431</td>
+      <td id="T_078cf_row9_col20" class="data row9 col20">nan</td>
     </tr>
     <tr>
-      <th id="T_80464_level0_row10" class="row_heading level0 row10">max</th>
-      <td id="T_80464_row10_col0" class="data row10 col0">8698.000000</td>
-      <td id="T_80464_row10_col1" class="data row10 col1">nan</td>
-      <td id="T_80464_row10_col2" class="data row10 col2">24198062.000000</td>
-      <td id="T_80464_row10_col3" class="data row10 col3">15204.633333</td>
-      <td id="T_80464_row10_col4" class="data row10 col4">1798.000000</td>
-      <td id="T_80464_row10_col5" class="data row10 col5">1499.000000</td>
-      <td id="T_80464_row10_col6" class="data row10 col6">5797.000000</td>
-      <td id="T_80464_row10_col7" class="data row10 col7">1496.000000</td>
-      <td id="T_80464_row10_col8" class="data row10 col8">67.000000</td>
-      <td id="T_80464_row10_col9" class="data row10 col9">4397.000000</td>
-      <td id="T_80464_row10_col10" class="data row10 col10">36.970000</td>
-      <td id="T_80464_row10_col11" class="data row10 col11">2597.000000</td>
-      <td id="T_80464_row10_col12" class="data row10 col12">nan</td>
-      <td id="T_80464_row10_col13" class="data row10 col13">4998.070000</td>
-      <td id="T_80464_row10_col14" class="data row10 col14">50.000000</td>
-      <td id="T_80464_row10_col15" class="data row10 col15">nan</td>
-      <td id="T_80464_row10_col16" class="data row10 col16">82331.000000</td>
-      <td id="T_80464_row10_col17" class="data row10 col17">10000.000000</td>
-      <td id="T_80464_row10_col18" class="data row10 col18">nan</td>
-      <td id="T_80464_row10_col19" class="data row10 col19">1602.040519</td>
-      <td id="T_80464_row10_col20" class="data row10 col20">nan</td>
+      <th id="T_078cf_level0_row10" class="row_heading level0 row10">max</th>
+      <td id="T_078cf_row10_col0" class="data row10 col0">8698.000000</td>
+      <td id="T_078cf_row10_col1" class="data row10 col1">nan</td>
+      <td id="T_078cf_row10_col2" class="data row10 col2">24198062.000000</td>
+      <td id="T_078cf_row10_col3" class="data row10 col3">15204.633333</td>
+      <td id="T_078cf_row10_col4" class="data row10 col4">1798.000000</td>
+      <td id="T_078cf_row10_col5" class="data row10 col5">1499.000000</td>
+      <td id="T_078cf_row10_col6" class="data row10 col6">5797.000000</td>
+      <td id="T_078cf_row10_col7" class="data row10 col7">1496.000000</td>
+      <td id="T_078cf_row10_col8" class="data row10 col8">67.000000</td>
+      <td id="T_078cf_row10_col9" class="data row10 col9">4397.000000</td>
+      <td id="T_078cf_row10_col10" class="data row10 col10">36.970000</td>
+      <td id="T_078cf_row10_col11" class="data row10 col11">2597.000000</td>
+      <td id="T_078cf_row10_col12" class="data row10 col12">nan</td>
+      <td id="T_078cf_row10_col13" class="data row10 col13">4998.070000</td>
+      <td id="T_078cf_row10_col14" class="data row10 col14">50.000000</td>
+      <td id="T_078cf_row10_col15" class="data row10 col15">nan</td>
+      <td id="T_078cf_row10_col16" class="data row10 col16">82331.000000</td>
+      <td id="T_078cf_row10_col17" class="data row10 col17">10000.000000</td>
+      <td id="T_078cf_row10_col18" class="data row10 col18">nan</td>
+      <td id="T_078cf_row10_col19" class="data row10 col19">1602.040519</td>
+      <td id="T_078cf_row10_col20" class="data row10 col20">nan</td>
     </tr>
   </tbody>
 </table>
@@ -787,7 +798,7 @@ Monthly_Balance Successfully Cleaned</code></pre>
 <div class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>pie_plot(df, [<span class="st">'Credit_Mix'</span>, <span class="st">'Payment_of_Min_Amount'</span>, <span class="st">'Payment_Behaviour'</span>, <span class="st">'Credit_Score'</span>], <span class="dv">2</span>,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="data_exploring_Quarto_files/figure-html/cell-25-output-1.png" width="1324" height="1148"></p>
+<p><img src="data_exploring_Quarto_files/figure-html/cell-25-output-1.png" width="1338" height="1148"></p>
 </div>
 </div>
 <div class="cell" data-execution_count="25">
@@ -1449,7 +1460,7 @@ New Shape:  (70221, 21)</code></pre>
   <tbody>
     <tr>
       <th>0</th>
-      <td>1</td>
+      <td>2</td>
       <td>0</td>
       <td>2</td>
       <td>-0.529412</td>
@@ -1659,8 +1670,8 @@ New Shape:  (70221, 21)</code></pre>
       <td>0</td>
       <td>0</td>
       <td>0</td>
-      <td>0</td>
       <td>1</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
