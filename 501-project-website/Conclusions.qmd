@@ -1,0 +1,80 @@
+# Conclusions
+
+## Data Gathering/Exploring/Cleaning
+
+Text cleaning is task-specific and one needs to have a strong idea about what they want their end result to be and even review the data to see what exactly they can achieve.
+
+Here I summarized some steps to clean text data:
+
+**Most common methods for Cleaning the Data**
+
+* Lowecasing the data
+* Removing Puncuatations
+* Removing Numbers
+* Removing extra space
+* Replacing the repetitions of punctations
+* Removing Emojis
+* Removing emoticons
+* Removing Contractions
+
+But we should keep in mind that there is actually no fixed way to clean a data set. All we need to do is to find a suitable method to clean your own data set.
+
+The data went through the process of cleaning as follows:
+
+* Explored and visualized the data
+* Handled missing values.
+* Handled Outliers.
+* Handled categorical data encoding using one hot encoder and Label encoder.
+* Handled numerical values using a Robust Scaler
+
+## Naive Bayes Classification
+
+Naive Bayes algorithms are mostly used in sentiment analysis, spam filtering, recommendation systems etc. They are fast and easy to implement but their biggest disadvantage is that the requirement of predictors to be independent. In most of the real life cases, the predictors are dependent, this hinders the performance of the classifier.
+
+* In spite of my apparently over-simplified assumptions, naive Bayes classifiers have worked quite well in many real-world situations, famously document classification and spam filtering. They require a small amount of training data to estimate the necessary parameters.
+
+* Naive Bayes learners and classifiers can be extremely fast compared to more sophisticated methods. The decoupling of the class conditional feature distributions means that each distribution can be independently estimated as a one dimensional distribution. This in turn helps to alleviate problems stemming from the curse of dimensionality.
+
+## Decision Tree Classification
+
+Here I summarized some pros and cons of the decision tree classifier.
+
+* Pros
+    * Decision trees are easy to interpret and visualize.
+    * It can easily capture Non-linear patterns.
+    * It requires fewer data preprocessing from the user, for example, there is no need to normalize columns.
+    * It can be used for feature engineering such as predicting missing values, suitable for variable selection.
+    * The decision tree has no assumptions about distribution because of the non-parametric nature of the algorithm. (Source)
+* Cons
+    * Sensitive to noisy data. It can overfit noisy data.
+    * The small variation(or variance) in data can result in the different decision tree. This can be reduced by bagging and boosting algorithms.
+    * Decision trees are biased with imbalance dataset, so it is recommended that balance out the dataset before creating the decision tree.
+
+## SVM
+
+Here I summarized some pros and cons for the SVM model.
+
+**Pros and Cons associated with SVM**
+* Pros:
+    * It works really well with a clear margin of separation
+    * It is effective in high dimensional spaces.
+    * It is effective in cases where the number of dimensions is greater than the number of samples.
+    * It uses a subset of training points in the decision function (called support vectors), so it is also memory efficient.
+* Cons:
+    * It doesn’t perform well when we have large data set because the required training time is higher
+    * It also doesn’t perform very well, when the data set has more noise i.e. target classes are overlapping
+    * SVM doesn’t directly provide probability estimates, these are calculated using an expensive five-fold cross-validation. It is included in the related SVC method of Python scikit-learn library.
+
+Also, support vector machine allows you to classify data that’s linearly separable. If it isn’t linearly separable, you can use the kernel trick to make it work. However, for text classification it’s better to just stick to a linear kernel.
+
+## Clustering
+
+In this work, we have applied the three most common clustering algorithms on the same dataset and obtained the corresponding results. In kmeans, we first classified the data into three categories based on intuition, but the clustering results were poorly matched to the labels that came with the original data, with a maximum of 47% after model tuning, but this value is only a reference, because kmeans and the two algorithms mentioned below are unsupervised learning methods.
+
+In the second part, I implemented the DBSCAN algorithm on the dataset, using scikit learn. in this part, I parametrized two parameters, eps and min_samples, choosing the optimal eps based on the best silhouette score and the optimal min_samples based on the most reasonable number of clusters.
+
+In the last part I did hierarchical clustering. And dendrograms are used to visualize the results. The reasonable clustering result is decided based on the divergence of dendrograms. In this part I make parameter selection for linkage, choosing among the optional methods of complete, ward and average.
+
+## ARM
+
+From the data frame above containing the result, we find that among all combinations of payment behaviour and occupation, we can observe that the probability of certain combinations occurring is very high, that is, for people in a particular occupation, they may tend to have a certain payment habit, for example, 25% of people who are writers have a payment habit of low spent small value at the same time. by these relationships By comparing these relationships, we can make better decisions for credit evaluation in employment.

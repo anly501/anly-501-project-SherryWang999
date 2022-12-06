@@ -198,3 +198,25 @@ txt.head()
 ```
 
 
+## Results
+
+In this part, I used Twitter api and tweepy to collect tweets text data. Then I used a pipeline to clean the text data set. In the pipeline, I used regular expressions to match the words and removed stop words. Then I plot a wordcloud to show the keywords of my data. Next I did the sensitive analysis to add a label for the data for further model input. And finally save the data into a csv file for further analysis.
+
+## Conclusions
+
+Text cleaning is task-specific and one needs to have a strong idea about what they want their end result to be and even review the data to see what exactly they can achieve.
+
+Here I summarized some steps to clean text data:
+
+**Most common methods for Cleaning the Data**
+
+* Lowecasing the data
+* Removing Puncuatations
+* Removing Numbers
+* Removing extra space
+* Replacing the repetitions of punctations
+* Removing Emojis
+* Removing emoticons
+* Removing Contractions
+
+But we should keep in mind that there is actually no fixed way to clean a data set. All we need to do is to find a suitable method to clean your own data set.

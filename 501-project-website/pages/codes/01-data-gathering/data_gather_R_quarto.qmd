@@ -1,8 +1,7 @@
 ---
-title: "Data Gathering by R"
-author: "Shiyu Wang"
-date: "9/12/2022"
-output: html_document
+title: "data gather by R"
+format: html
+editor: visual
 ---
 
 ## Introduction
@@ -17,11 +16,9 @@ I'm gonna use the NLP methods to do some sentiment analysis and the result will 
 
 The Twitter API is a set of programmatic endpoints that can be used to understand or build the conversation on Twitter. This API allows you to find and retrieve, engage with, or create a variety of different resources including the following: Tweets. Users.
 
-**wordcloud**
+**Wordcloud**
 
 Word clouds or tag clouds are graphical representations of word frequency that give greater prominence to words that appear more frequently in a source text. The larger the word in the visual the more common the word was in the document(s).
-
-## Methods
 
 ```{r}
 library("selectr")
@@ -96,8 +93,6 @@ tweets.corpus <- tweets.corpus %>%
   tm_map(content_transformer(tolower)) %>% # convert text to lowercase
   tm_map(removeWords,stopwords("english")) %>% # remove stopwords
   tm_map(removeWords,stopwords("SMART")) # remove stopwords not removed from previous line
-```
-```{r}
 tdm <- TermDocumentMatrix(tweets.corpus) %>% # create a term document matrix
       as.matrix()
 
@@ -107,7 +102,6 @@ head(df) # visualize!
 ```
 
 ```{r}
-set.seed(1234) # for reproducibility
 wcloud <- wordcloud2(df,   # generate word cloud
                      size = 1.5,
                      color= 'random-dark', # set colors
@@ -122,15 +116,22 @@ Text cleaning is task-specific and one needs to have a strong idea about what th
 
 Here I summarized some steps to clean text data:
 
-**Most common methods for Cleaning the Data**
+\*\*Most common methods for Cleaning the Data\*\*
 
-* Lowecasing the data
-* Removing Puncuatations
-* Removing Numbers
-* Removing extra space
-* Replacing the repetitions of punctations
-* Removing Emojis
-* Removing emoticons
-* Removing Contractions
+\* Lowecasing the data
+
+\* Removing Puncuatations
+
+\* Removing Numbers
+
+\* Removing extra space
+
+\* Replacing the repetitions of punctations
+
+\* Removing Emojis
+
+\* Removing emoticons
+
+\* Removing Contractions
 
 But we should keep in mind that there is actually no fixed way to clean a data set. All we need to do is to find a suitable method to clean your own data set.
