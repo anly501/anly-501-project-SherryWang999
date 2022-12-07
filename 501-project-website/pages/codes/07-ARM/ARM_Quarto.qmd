@@ -134,8 +134,10 @@ df_ar
 
 ```{python}
 import networkx as nx
+import matplotlib.pyplot as plt
 G = nx.from_pandas_edgelist(df_ar, 'antecedents', 'consequents', True, nx.DiGraph())
 nx.draw(G)
+plt.title('Network visualization of ARM')
 ```
 
 ## Result

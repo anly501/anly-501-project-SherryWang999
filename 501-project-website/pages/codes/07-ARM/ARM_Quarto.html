@@ -610,7 +610,7 @@ DataFrames with non-bool types result in worse computationalperformance and thei
     <tr>
       <th>107</th>
       <td>0.014325</td>
-      <td>(Payment_Behaviour_High_spent_Small_value_paym...</td>
+      <td>(Occupation_Writer, Payment_Behaviour_High_spe...</td>
     </tr>
     <tr>
       <th>108</th>
@@ -620,7 +620,7 @@ DataFrames with non-bool types result in worse computationalperformance and thei
     <tr>
       <th>109</th>
       <td>0.018170</td>
-      <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
+      <td>(Occupation_Writer, Payment_Behaviour_Low_spen...</td>
     </tr>
     <tr>
       <th>110</th>
@@ -684,18 +684,6 @@ DataFrames with non-bool types result in worse computationalperformance and thei
     </tr>
     <tr>
       <th>2</th>
-      <td>(Occupation_Accountant)</td>
-      <td>(Payment_Behaviour_High_spent_Medium_value_pay...</td>
-      <td>0.062639</td>
-      <td>0.251189</td>
-      <td>0.016156</td>
-      <td>0.257917</td>
-      <td>1.026786</td>
-      <td>0.000421</td>
-      <td>1.009067</td>
-    </tr>
-    <tr>
-      <th>3</th>
       <td>(Payment_Behaviour_High_spent_Medium_value_pay...</td>
       <td>(Occupation_Accountant)</td>
       <td>0.251189</td>
@@ -705,6 +693,18 @@ DataFrames with non-bool types result in worse computationalperformance and thei
       <td>1.026786</td>
       <td>0.000421</td>
       <td>1.001793</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>(Occupation_Accountant)</td>
+      <td>(Payment_Behaviour_High_spent_Medium_value_pay...</td>
+      <td>0.062639</td>
+      <td>0.251189</td>
+      <td>0.016156</td>
+      <td>0.257917</td>
+      <td>1.026786</td>
+      <td>0.000421</td>
+      <td>1.009067</td>
     </tr>
     <tr>
       <th>4</th>
@@ -744,18 +744,6 @@ DataFrames with non-bool types result in worse computationalperformance and thei
     </tr>
     <tr>
       <th>176</th>
-      <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
-      <td>(Occupation_Writer)</td>
-      <td>0.138590</td>
-      <td>0.129388</td>
-      <td>0.018170</td>
-      <td>0.131105</td>
-      <td>1.013273</td>
-      <td>0.000238</td>
-      <td>1.001977</td>
-    </tr>
-    <tr>
-      <th>177</th>
       <td>(Occupation_Writer)</td>
       <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
       <td>0.129388</td>
@@ -765,6 +753,18 @@ DataFrames with non-bool types result in worse computationalperformance and thei
       <td>1.013273</td>
       <td>0.000238</td>
       <td>1.002140</td>
+    </tr>
+    <tr>
+      <th>177</th>
+      <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
+      <td>(Occupation_Writer)</td>
+      <td>0.138590</td>
+      <td>0.129388</td>
+      <td>0.018170</td>
+      <td>0.131105</td>
+      <td>1.013273</td>
+      <td>0.000238</td>
+      <td>1.001977</td>
     </tr>
     <tr>
       <th>178</th>
@@ -798,10 +798,15 @@ DataFrames with non-bool types result in worse computationalperformance and thei
 </div>
 <div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> nx.from_pandas_edgelist(df_ar, <span class="st">'antecedents'</span>, <span class="st">'consequents'</span>, <span class="va">True</span>, nx.DiGraph())</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>nx.draw(G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> nx.from_pandas_edgelist(df_ar, <span class="st">'antecedents'</span>, <span class="st">'consequents'</span>, <span class="va">True</span>, nx.DiGraph())</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>nx.draw(G)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Network visualization of ARM'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>Text(0.5, 1.0, 'Network visualization of ARM')</code></pre>
+</div>
 <div class="cell-output cell-output-display">
-<p><img src="ARM_Quarto_files/figure-html/cell-9-output-1.png" width="691" height="499"></p>
+<p><img src="ARM_Quarto_files/figure-html/cell-9-output-2.png" width="691" height="519"></p>
 </div>
 </div>
 </section>
