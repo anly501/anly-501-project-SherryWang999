@@ -132,6 +132,12 @@ df_ar = association_rules(df, metric = "confidence", min_threshold = 0.001)
 df_ar
 ```
 
+```{python}
+import networkx as nx
+G = nx.from_pandas_edgelist(df_ar, 'antecedents', 'consequents', True, nx.DiGraph())
+nx.draw(G)
+```
+
 ## Result
 
 **For example, if we examine our 1st index value;**

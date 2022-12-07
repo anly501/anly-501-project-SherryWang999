@@ -605,12 +605,12 @@ DataFrames with non-bool types result in worse computationalperformance and thei
     <tr>
       <th>106</th>
       <td>0.032730</td>
-      <td>(Payment_Behaviour_High_spent_Medium_value_pay...</td>
+      <td>(Occupation_Writer, Payment_Behaviour_High_spe...</td>
     </tr>
     <tr>
       <th>107</th>
       <td>0.014325</td>
-      <td>(Occupation_Writer, Payment_Behaviour_High_spe...</td>
+      <td>(Payment_Behaviour_High_spent_Small_value_paym...</td>
     </tr>
     <tr>
       <th>108</th>
@@ -620,7 +620,7 @@ DataFrames with non-bool types result in worse computationalperformance and thei
     <tr>
       <th>109</th>
       <td>0.018170</td>
-      <td>(Occupation_Writer, Payment_Behaviour_Low_spen...</td>
+      <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
     </tr>
     <tr>
       <th>110</th>
@@ -660,18 +660,6 @@ DataFrames with non-bool types result in worse computationalperformance and thei
   <tbody>
     <tr>
       <th>0</th>
-      <td>(Occupation_Accountant)</td>
-      <td>(Payment_Behaviour_High_spent_Large_value_paym...</td>
-      <td>0.062639</td>
-      <td>0.137302</td>
-      <td>0.008313</td>
-      <td>0.132713</td>
-      <td>0.966577</td>
-      <td>-0.000287</td>
-      <td>0.994709</td>
-    </tr>
-    <tr>
-      <th>1</th>
       <td>(Payment_Behaviour_High_spent_Large_value_paym...</td>
       <td>(Occupation_Accountant)</td>
       <td>0.137302</td>
@@ -683,19 +671,19 @@ DataFrames with non-bool types result in worse computationalperformance and thei
       <td>0.997772</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>(Payment_Behaviour_High_spent_Medium_value_pay...</td>
+      <th>1</th>
       <td>(Occupation_Accountant)</td>
-      <td>0.251189</td>
+      <td>(Payment_Behaviour_High_spent_Large_value_paym...</td>
       <td>0.062639</td>
-      <td>0.016156</td>
-      <td>0.064317</td>
-      <td>1.026786</td>
-      <td>0.000421</td>
-      <td>1.001793</td>
+      <td>0.137302</td>
+      <td>0.008313</td>
+      <td>0.132713</td>
+      <td>0.966577</td>
+      <td>-0.000287</td>
+      <td>0.994709</td>
     </tr>
     <tr>
-      <th>3</th>
+      <th>2</th>
       <td>(Occupation_Accountant)</td>
       <td>(Payment_Behaviour_High_spent_Medium_value_pay...</td>
       <td>0.062639</td>
@@ -707,16 +695,28 @@ DataFrames with non-bool types result in worse computationalperformance and thei
       <td>1.009067</td>
     </tr>
     <tr>
-      <th>4</th>
+      <th>3</th>
+      <td>(Payment_Behaviour_High_spent_Medium_value_pay...</td>
       <td>(Occupation_Accountant)</td>
-      <td>(Payment_Behaviour_High_spent_Small_value_paym...</td>
+      <td>0.251189</td>
       <td>0.062639</td>
+      <td>0.016156</td>
+      <td>0.064317</td>
+      <td>1.026786</td>
+      <td>0.000421</td>
+      <td>1.001793</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>(Payment_Behaviour_High_spent_Small_value_paym...</td>
+      <td>(Occupation_Accountant)</td>
       <td>0.113641</td>
+      <td>0.062639</td>
       <td>0.007250</td>
-      <td>0.115736</td>
+      <td>0.063793</td>
       <td>1.018435</td>
       <td>0.000131</td>
-      <td>1.002369</td>
+      <td>1.001233</td>
     </tr>
     <tr>
       <th>...</th>
@@ -744,18 +744,6 @@ DataFrames with non-bool types result in worse computationalperformance and thei
     </tr>
     <tr>
       <th>176</th>
-      <td>(Occupation_Writer)</td>
-      <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
-      <td>0.129388</td>
-      <td>0.138590</td>
-      <td>0.018170</td>
-      <td>0.140430</td>
-      <td>1.013273</td>
-      <td>0.000238</td>
-      <td>1.002140</td>
-    </tr>
-    <tr>
-      <th>177</th>
       <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
       <td>(Occupation_Writer)</td>
       <td>0.138590</td>
@@ -765,6 +753,18 @@ DataFrames with non-bool types result in worse computationalperformance and thei
       <td>1.013273</td>
       <td>0.000238</td>
       <td>1.001977</td>
+    </tr>
+    <tr>
+      <th>177</th>
+      <td>(Occupation_Writer)</td>
+      <td>(Payment_Behaviour_Low_spent_Medium_value_paym...</td>
+      <td>0.129388</td>
+      <td>0.138590</td>
+      <td>0.018170</td>
+      <td>0.140430</td>
+      <td>1.013273</td>
+      <td>0.000238</td>
+      <td>1.002140</td>
     </tr>
     <tr>
       <th>178</th>
@@ -794,6 +794,14 @@ DataFrames with non-bool types result in worse computationalperformance and thei
 </table>
 <p>180 rows × 9 columns</p>
 </div>
+</div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> nx.from_pandas_edgelist(df_ar, <span class="st">'antecedents'</span>, <span class="st">'consequents'</span>, <span class="va">True</span>, nx.DiGraph())</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>nx.draw(G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="ARM_Quarto_files/figure-html/cell-9-output-1.png" width="691" height="499"></p>
 </div>
 </div>
 </section>
